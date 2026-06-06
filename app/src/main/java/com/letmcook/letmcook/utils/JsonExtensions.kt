@@ -52,16 +52,6 @@ fun Any?.asDouble(): Double? = when (this) {
     else -> toString().toDoubleOrNull()
 }
 
-fun Any?.asSyncState(legacyBoolean: Any?): com.letmcook.letmcook.services.SyncState {
-    val explicit = this.asInt()
-    return when (explicit) {
-        1 -> com.letmcook.letmcook.services.SyncState.SYNCED
-        2 -> com.letmcook.letmcook.services.SyncState.CONFLICT
-        0 -> com.letmcook.letmcook.services.SyncState.PENDING
-        else -> if (legacyBoolean.asBoolean()) com.letmcook.letmcook.services.SyncState.SYNCED else com.letmcook.letmcook.services.SyncState.PENDING
-    }
-}
-
 fun extractMappedValue(source: Map<String, Any?>, aliases: List<String>): Any? {
     val missingValue = Any() // Internal marker
     if (aliases.isEmpty()) {
@@ -75,4 +65,11 @@ fun extractMappedValue(source: Map<String, Any?>, aliases: List<String>): Any? {
     }
 
     return missingValue
+}
+
+/**
+ * Validates if a recipe has at least one ingredient.
+ */
+fun validateRecipeIngredients(ingredients: List<Any?>): Boolean {
+    return ingredients.isNotEmpty()
 }

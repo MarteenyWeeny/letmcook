@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/dashboardFragment"
+        android:icon="@android:drawable/ic_menu_today"
+        android:title="Dashboard" />
+    <item
+        android:id="@+id/pantryFragment"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="Pantry" />
+    <item
+        android:id="@+id/recipeExploreFragment"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Recipes" />
+    <item
+        android:id="@+id/groceryListFragment"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="Grocery" />
+</menu>

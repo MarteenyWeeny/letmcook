@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/signInFragment">
+
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.letmcook.letmcook.ui.auth.SignInFragment"
+        android:label="Sign In"
+        tools:layout="@layout/fragment_signin">
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.letmcook.letmcook.ui.auth.SignUpFragment"
+        android:label="Sign Up"
+        tools:layout="@layout/fragment_signup">
+        <action
+            android:id="@+id/action_signUpFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+        <action
+            android:id="@+id/action_signUpFragment_to_goalSettingFragment"
+            app:destination="@id/goalSettingFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.letmcook.letmcook.ui.dashboard.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_dashboardFragment_to_goalSettingFragment"
+            app:destination="@id/goalSettingFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_recipeDetailFragment"
+            app:destination="@id/recipeDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/goalSettingFragment"
+        android:name="com.letmcook.letmcook.ui.dashboard.GoalSettingFragment"
+        android:label="Set Goals"
+        tools:layout="@layout/fragment_goal_setting">
+        <action
+            android:id="@+id/action_goalSettingFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pantryFragment"
+        android:name="com.letmcook.letmcook.ui.pantry.PantryFragment"
+        android:label="Pantry" />
+
+    <fragment
+        android:id="@+id/recipeExploreFragment"
+        android:name="com.letmcook.letmcook.ui.recipe.RecipeExploreFragment"
+        android:label="Explore Recipes">
+        <action
+            android:id="@+id/action_recipeExploreFragment_to_recipeDetailFragment"
+            app:destination="@id/recipeDetailFragment" />
+        <action
+            android:id="@+id/action_recipeExploreFragment_to_addRecipeFragment"
+            app:destination="@id/addRecipeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addRecipeFragment"
+        android:name="com.letmcook.letmcook.ui.recipe.AddRecipeFragment"
+        android:label="Add Recipe"
+        tools:layout="@layout/fragment_add_recipe" />
+
+    <fragment
+        android:id="@+id/recipeDetailFragment"
+        android:name="com.letmcook.letmcook.ui.recipe.RecipeDetailFragment"
+        android:label="Recipe Details" />
+
+    <fragment
+        android:id="@+id/groceryListFragment"
+        android:name="com.letmcook.letmcook.ui.grocery.GroceryListFragment"
+        android:label="Grocery List" />
+</navigation>

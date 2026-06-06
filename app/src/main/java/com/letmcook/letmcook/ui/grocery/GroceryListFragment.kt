@@ -1,0 +1,132 @@
+package com.letmcook.letmcook.ui.grocery
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.chip.Chip
+import com.letmcook.letmcook.databinding.FragmentGroceryListBinding
+import com.letmcook.letmcook.models.GroceryItemModel
+import com.letmcook.letmcook.models.IngredientModel
+import com.letmcook.letmcook.services.DatabaseService
+import com.letmcook.letmcook.services.SessionManager
+
+class GroceryListFragment : Fragment() {
+
+    private var _binding: FragmentGroceryListBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var databaseService: DatabaseService
+    private lateinit var sessionManager: SessionManager
+    private lateinit var adapter: GroceryAdapter
+    private var allItems: List<Pair<GroceryItemModel, IngredientModel?>> = emptyList()
+    private var selectedCategory: String? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentGroceryListBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        databaseService = DatabaseService(requireContext())
+        sessionManager = SessionManager(requireContext())
+
+        setupRecyclerView()
+        loadGroceryList()
+    }
+
+    private fun setupRecyclerView() {
+        adapter = GroceryAdapter(emptyList()) { item ->
+            showDeleteDialog(item)
+        }
+        binding.rvGrocery.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvGrocery.adapter = adapter
+    }
+
+    private fun loadGroceryList() {
+        val userId = sessionManager.getUserId() ?: "default_user"
+        val dbItems = databaseService.getGroceryItems(userId)
+        val allIngredients = databaseService.getAllIngredients().associateBy { it.id }
+
+        // Merge duplicates for a clean display
+        allItems = dbItems.groupBy { it.ingredientId }.map { (ingId, items) ->
+            val first = items.first()
+            val totalQty = items.sumOf { it.quantity }
+            first.copy(quantity = totalQty) to allIngredients[ingId]
+        }
+        
+        setupCategoryFilters()
+        filterList()
+    }
+
+    private fun setupCategoryFilters() {
+        binding.cgCategories.removeAllViews()
+        
+        val categories = allItems.mapNotNull { it.second?.category }.distinct().sorted()
+        
+        // "All" chip
+        val allChip = Chip(requireContext()).apply {
+            id = View.generateViewId()
+            text = "All"
+            isCheckable = true
+            isChecked = selectedCategory == null
+        }
+        binding.cgCategories.addView(allChip)
+
+        categories.forEach { category ->
+            val chip = Chip(requireContext()).apply {
+                id = View.generateViewId()
+                text = category
+                isCheckable = true
+                isChecked = selectedCategory == category
+            }
+            binding.cgCategories.addView(chip)
+        }
+
+        binding.cgCategories.setOnCheckedStateChangeListener { group, checkedIds ->
+            val checkedId = checkedIds.firstOrNull()
+            if (checkedId != null) {
+                val chip = group.findViewById<Chip>(checkedId)
+                selectedCategory = if (chip.text == "All") null else chip.text.toString()
+                filterList()
+            } else {
+                // If nothing is selected, default back to All
+                selectedCategory = null
+                filterList()
+            }
+        }
+    }
+
+    private fun filterList() {
+        val filtered = if (selectedCategory == null) {
+            allItems
+        } else {
+            allItems.filter { it.second?.category == selectedCategory }
+        }
+        adapter.updateData(filtered)
+    }
+
+    private fun showDeleteDialog(item: GroceryItemModel) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Item")
+            .setMessage("Are you sure you want to remove this from your grocery list?")
+            .setPositiveButton("Delete") { _, _ ->
+                val userId = sessionManager.getUserId() ?: "default_user"
+                // Delete all entries for this ingredient to handle merged view correctly
+                databaseService.deleteGroceryItemByIngredient(userId, item.ingredientId)
+                Toast.makeText(requireContext(), "Item removed", Toast.LENGTH_SHORT).show()
+                loadGroceryList()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}

@@ -5,12 +5,13 @@ import com.letmcook.letmcook.utils.asDouble
 import com.letmcook.letmcook.utils.toMap
 import org.json.JSONObject
 
-data class IngredientModel(
+data class IntakeModel(
     val id: String,
     var ownerId: String,
-    var name: String,
-    var category: String? = null,
-    var unitOfMeasure: String? = null,
+    var recipeId: String? = null,
+    var ingredientId: String? = null,
+    var quantity: Double = 1.0,
+    var date: String,
     var calories: Double = 0.0,
     var protein: Double = 0.0,
     var carbs: Double = 0.0,
@@ -22,9 +23,10 @@ data class IngredientModel(
     fun toMap() = mapOf(
         "id" to id,
         "owner_id" to ownerId,
-        "name" to name,
-        "category" to category,
-        "unit_of_measure" to unitOfMeasure,
+        "recipe_id" to recipeId,
+        "ingredient_id" to ingredientId,
+        "quantity" to quantity,
+        "date" to date,
         "calories" to calories,
         "protein" to protein,
         "carbs" to carbs,
@@ -37,12 +39,13 @@ data class IngredientModel(
     fun toJson() = JSONObject(toMap()).toString()
 
     companion object {
-        fun fromMap(map: Map<String, Any?>) = IngredientModel(
+        fun fromMap(map: Map<String, Any?>) = IntakeModel(
             id = map["id"]?.toString().orEmpty(),
             ownerId = map["owner_id"]?.toString().orEmpty(),
-            name = map["name"]?.toString().orEmpty(),
-            category = map["category"]?.toString(),
-            unitOfMeasure = map["unit_of_measure"]?.toString(),
+            recipeId = map["recipe_id"]?.toString(),
+            ingredientId = map["ingredient_id"]?.toString(),
+            quantity = map["quantity"].asDouble() ?: 1.0,
+            date = map["date"]?.toString().orEmpty(),
             calories = map["calories"].asDouble() ?: 0.0,
             protein = map["protein"].asDouble() ?: 0.0,
             carbs = map["carbs"].asDouble() ?: 0.0,
@@ -53,6 +56,6 @@ data class IngredientModel(
         )
 
         fun fromJson(source: String) =
-            fromMap(JSONObject(source).toMap() as Map<String, Any?>)
+            fromMap(JSONObject(source).toMap())
     }
 }

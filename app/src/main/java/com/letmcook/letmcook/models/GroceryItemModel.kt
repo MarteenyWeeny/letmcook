@@ -5,16 +5,12 @@ import com.letmcook.letmcook.utils.asDouble
 import com.letmcook.letmcook.utils.toMap
 import org.json.JSONObject
 
-data class IngredientModel(
+data class GroceryItemModel(
     val id: String,
     var ownerId: String,
-    var name: String,
-    var category: String? = null,
-    var unitOfMeasure: String? = null,
-    var calories: Double = 0.0,
-    var protein: Double = 0.0,
-    var carbs: Double = 0.0,
-    var fat: Double = 0.0,
+    var ingredientId: String,
+    var quantity: Double,
+    var isBought: Boolean = false,
     var isDeleted: Boolean = false,
     var isSynchronized: Boolean = false,
     var createdAt: String
@@ -22,13 +18,9 @@ data class IngredientModel(
     fun toMap() = mapOf(
         "id" to id,
         "owner_id" to ownerId,
-        "name" to name,
-        "category" to category,
-        "unit_of_measure" to unitOfMeasure,
-        "calories" to calories,
-        "protein" to protein,
-        "carbs" to carbs,
-        "fat" to fat,
+        "ingredient_id" to ingredientId,
+        "quantity" to quantity,
+        "is_bought" to isBought,
         "is_deleted" to isDeleted,
         "is_synchronized" to isSynchronized,
         "created_at" to createdAt
@@ -37,16 +29,12 @@ data class IngredientModel(
     fun toJson() = JSONObject(toMap()).toString()
 
     companion object {
-        fun fromMap(map: Map<String, Any?>) = IngredientModel(
+        fun fromMap(map: Map<String, Any?>) = GroceryItemModel(
             id = map["id"]?.toString().orEmpty(),
             ownerId = map["owner_id"]?.toString().orEmpty(),
-            name = map["name"]?.toString().orEmpty(),
-            category = map["category"]?.toString(),
-            unitOfMeasure = map["unit_of_measure"]?.toString(),
-            calories = map["calories"].asDouble() ?: 0.0,
-            protein = map["protein"].asDouble() ?: 0.0,
-            carbs = map["carbs"].asDouble() ?: 0.0,
-            fat = map["fat"].asDouble() ?: 0.0,
+            ingredientId = map["ingredient_id"]?.toString().orEmpty(),
+            quantity = map["quantity"].asDouble() ?: 0.0,
+            isBought = map["is_bought"].asBoolean(),
             isDeleted = map["is_deleted"].asBoolean(),
             isSynchronized = map["is_synchronized"].asBoolean(),
             createdAt = map["created_at"]?.toString().orEmpty()
