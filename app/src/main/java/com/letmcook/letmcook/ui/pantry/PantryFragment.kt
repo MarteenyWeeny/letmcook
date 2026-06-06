@@ -168,7 +168,7 @@ class PantryFragment : Fragment() {
         
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, names)
+        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.item_dropdown, names)
         dialogBinding.spinnerIngredients.setAdapter(spinnerAdapter)
 
         dialogBinding.btnCancel.setOnClickListener { dialog.dismiss() }

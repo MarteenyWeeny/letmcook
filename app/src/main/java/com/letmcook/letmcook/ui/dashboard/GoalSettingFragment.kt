@@ -45,7 +45,7 @@ class GoalSettingFragment : Fragment() {
 
     private fun setupActivitySpinner() {
         val levels = arrayOf("Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, levels)
+        val adapter = ArrayAdapter(requireContext(), R.layout.item_dropdown, levels)
         binding.spinnerActivity.setAdapter(adapter)
         // Default value
         binding.spinnerActivity.setText(levels[0], false)

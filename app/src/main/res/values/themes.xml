@@ -21,6 +21,9 @@
         <!-- Text Colors -->
         <item name="android:textColorPrimary">@color/food_on_surface</item>
         <item name="android:textColorSecondary">@color/food_on_surface_variant</item>
+
+        <!-- Dropdown / Menu Styling -->
+        <item name="autoCompleteTextViewStyle">@style/Widget.Material3.AutoCompleteTextView.OutlinedBox</item>
     </style>
 
     <style name="Theme.LetMCook" parent="Base.Theme.LetMCook" />
