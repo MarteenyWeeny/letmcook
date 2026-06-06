@@ -56,7 +56,11 @@ class GoalSettingFragment : Fragment() {
         val weight = binding.etWeight.text.toString().toDoubleOrNull() ?: return
         val height = binding.etHeight.text.toString().toDoubleOrNull() ?: return
         val isMale = binding.rbMale.isChecked
-        val activityLevel = binding.spinnerActivity.selectedItemPosition
+        
+        val selectedActivity = binding.spinnerActivity.text.toString()
+        val levels = arrayOf("Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active")
+        val activityLevel = levels.indexOf(selectedActivity).coerceAtLeast(0)
+
         val goalType = when (binding.rgGoal.checkedRadioButtonId) {
             R.id.rbLose -> -500
             R.id.rbGain -> 500

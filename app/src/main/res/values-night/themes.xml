@@ -1,7 +1,20 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.LetMCook" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Primary Brand Colors -->
+        <item name="colorPrimary">@color/food_primary_light</item>
+        <item name="colorOnPrimary">#221A17</item>
+        <item name="colorPrimaryContainer">@color/food_primary</item>
+
+        <!-- Secondary Brand Colors -->
+        <item name="colorSecondary">@color/food_secondary_container</item>
+        <item name="colorOnSecondary">#111F00</item>
+
+        <!-- Background and Surface Colors -->
+        <item name="android:windowBackground">#1A110F</item>
+        <item name="colorSurface">#221A17</item>
+        <item name="colorOnSurface">#F5F0EE</item>
+        <item name="colorSurfaceVariant">#3D2F2A</item>
+        <item name="colorOnSurfaceVariant">#D8C2BC</item>
     </style>
 </resources>

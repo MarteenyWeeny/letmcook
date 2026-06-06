@@ -11,7 +11,9 @@ import android.widget.Spinner
 import com.google.android.material.chip.Chip
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.letmcook.letmcook.R
 import com.letmcook.letmcook.databinding.FragmentPantryBinding
+import com.letmcook.letmcook.databinding.DialogAddPantryItemBinding
 import com.letmcook.letmcook.models.IngredientModel
 import com.letmcook.letmcook.models.PantryItemModel
 import com.letmcook.letmcook.services.DatabaseService
@@ -159,15 +161,12 @@ class PantryFragment : Fragment() {
         val ingredients = databaseService.getAllIngredients()
         val names = ingredients.map { it.name }
 
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Add to Pantry")
+        val dialogBinding = DialogAddPantryItemBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogBinding.root)
+            .create()
         
-        val spinner = Spinner(requireContext())
-        spinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, names)
-        
-        val quantityInput = EditText(requireContext())
-        quantityInput.hint = "Quantity"
-        quantityInput.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.item_dropdown, names)
         dialogBinding.spinnerIngredients.setAdapter(spinnerAdapter)
@@ -193,8 +192,7 @@ class PantryFragment : Fragment() {
                 dialog.dismiss()
             }
         }
-        builder.setNegativeButton("Cancel", null)
-        builder.show()
+        dialog.show()
     }
 
     override fun onDestroyView() {
