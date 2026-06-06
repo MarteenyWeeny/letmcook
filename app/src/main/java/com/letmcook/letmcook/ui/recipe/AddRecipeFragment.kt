@@ -71,9 +71,8 @@ class AddRecipeFragment : Fragment() {
     private fun loadIngredients() {
         allIngredients = databaseService.getAllIngredients()
         val ingredientNames = allIngredients.map { it.name }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, ingredientNames)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerIngredients.adapter = adapter
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, ingredientNames)
+        binding.spinnerIngredients.setAdapter(adapter)
     }
 
     private fun setupButtons() {
@@ -82,8 +81,13 @@ class AddRecipeFragment : Fragment() {
         }
 
         binding.btnAddIngredientToList.setOnClickListener {
-            val selectedIdx = binding.spinnerIngredients.selectedItemPosition
-            if (selectedIdx < 0) return@setOnClickListener
+            val selectedName = binding.spinnerIngredients.text.toString()
+            val ingredient = allIngredients.find { it.name == selectedName }
+
+            if (ingredient == null) {
+                Toast.makeText(requireContext(), "Please select a valid ingredient", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             val quantity = binding.etIngQuantity.text.toString().toDoubleOrNull() ?: 0.0
             if (quantity <= 0) {
@@ -91,11 +95,11 @@ class AddRecipeFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val ingredient = allIngredients[selectedIdx]
             addedIngredients.add(ingredient to quantity)
             ingredientAdapter.notifyItemInserted(addedIngredients.size - 1)
             
-            // Clear quantity input
+            // Clear inputs
+            binding.spinnerIngredients.text?.clear()
             binding.etIngQuantity.text?.clear()
         }
 
