@@ -12,6 +12,7 @@
         android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@android:drawable/ic_menu_revert"
+        android:contentDescription="@string/desc_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="?attr/colorOnSurface" />
@@ -21,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="My Goals"
+        android:text="@string/my_goals"
         android:textColor="?attr/colorOnSurface"
         android:textSize="32sp"
         android:textStyle="bold"
@@ -44,7 +45,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Age"
+                android:hint="@string/age"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
@@ -63,7 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Weight (kg)"
+                android:hint="@string/weight_kg"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
@@ -82,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Height (cm)"
+                android:hint="@string/height_cm"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
@@ -102,29 +103,30 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:orientation="horizontal">
-                <RadioButton android:id="@+id/rbMale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Male" android:textColor="?attr/colorOnSurface" android:checked="true"/>
-                <RadioButton android:id="@+id/rbFemale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="Female" android:textColor="?attr/colorOnSurface"/>
+                <RadioButton android:id="@+id/rbMale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/male" android:textColor="?attr/colorOnSurface" android:checked="true"/>
+                <RadioButton android:id="@+id/rbFemale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="@string/female" android:textColor="?attr/colorOnSurface"/>
             </RadioGroup>
 
             <TextView
+                android:id="@+id/tvActivityLevelLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Activity Level"
+                android:labelFor="@id/spinnerActivity"
+                android:text="@string/activity_level"
                 android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilActivity"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusTopStart="12dp"
-                app:strokeWidth="0dp">
+                app:boxCornerRadiusTopStart="12dp">
 
                 <AutoCompleteTextView
                     android:id="@+id/spinnerActivity"
@@ -135,10 +137,11 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:id="@+id/tvGoalLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Your Goal"
+                android:text="@string/your_goal"
                 android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold" />
 
@@ -147,9 +150,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
-                <RadioButton android:id="@+id/rbLose" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Lose Weight" android:textColor="?attr/colorOnSurface"/>
-                <RadioButton android:id="@+id/rbMaintain" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Maintain Weight" android:textColor="?attr/colorOnSurface" android:checked="true"/>
-                <RadioButton android:id="@+id/rbGain" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Gain Muscle" android:textColor="?attr/colorOnSurface"/>
+                <RadioButton android:id="@+id/rbLose" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/lose_weight" android:textColor="?attr/colorOnSurface"/>
+                <RadioButton android:id="@+id/rbMaintain" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/maintain_weight" android:textColor="?attr/colorOnSurface" android:checked="true"/>
+                <RadioButton android:id="@+id/rbGain" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/gain_muscle" android:textColor="?attr/colorOnSurface"/>
             </RadioGroup>
 
         </LinearLayout>
@@ -159,7 +162,7 @@
         android:id="@+id/btnSaveGoals"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:text="Save Goals"
+        android:text="@string/save_goals"
         android:textAllCaps="false"
         android:textSize="18sp"
         android:textStyle="bold"

@@ -12,7 +12,7 @@ import java.util.*
 class DateAdapter(
     private var dates: List<Date>,
     private var selectedDate: Date,
-    private val onDateSelected: (Date) -> Unit
+    private val onDateSelected: (Date) -> Unit,
 ) : RecyclerView.Adapter<DateAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -30,7 +30,6 @@ class DateAdapter(
         val date = dates[position]
         val dayNameSdf = SimpleDateFormat("E", Locale.getDefault())
         val dayNumberSdf = SimpleDateFormat("d", Locale.getDefault())
-        val fullDateSdf = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
 
         holder.tvDayName.text = dayNameSdf.format(date).take(1).uppercase()
         holder.tvDayNumber.text = dayNumberSdf.format(date)
@@ -57,12 +56,18 @@ class DateAdapter(
     override fun getItemCount() = dates.size
 
     fun updateSelectedDate(date: Date) {
+        val oldIndex = dates.indexOfFirst { fullDateSdf.format(it) == fullDateSdf.format(selectedDate) }
         selectedDate = date
-        notifyDataSetChanged()
+        val newIndex = dates.indexOfFirst { fullDateSdf.format(it) == fullDateSdf.format(selectedDate) }
+        
+        if (oldIndex != -1) notifyItemChanged(oldIndex)
+        if (newIndex != -1) notifyItemChanged(newIndex)
     }
     
     fun updateDates(newDates: List<Date>) {
         dates = newDates
         notifyDataSetChanged()
     }
+
+    private val fullDateSdf = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
 }

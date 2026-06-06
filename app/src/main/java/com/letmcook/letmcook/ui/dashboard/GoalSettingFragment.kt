@@ -69,9 +69,9 @@ class GoalSettingFragment : Fragment() {
 
         // Mifflin-St Jeor
         val bmr = if (isMale) {
-            10 * weight + 6.25 * height - 5 * age + 5
+            (10 * weight) + (6.25 * height) - (5 * age) + 5
         } else {
-            10 * weight + 6.25 * height - 5 * age - 161
+            (10 * weight) + (6.25 * height) - (5 * age) - 161
         }
 
         val activityMultiplier = when (activityLevel) {
@@ -99,7 +99,7 @@ class GoalSettingFragment : Fragment() {
             proteinTargetGrams = proteinGrams,
             carbTargetGrams = carbGrams,
             fatTargetGrams = fatGrams,
-            createdAt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+            createdAt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date()),
         )
 
         databaseService.upsertNutritionGoal(goal)

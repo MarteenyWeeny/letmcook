@@ -116,7 +116,8 @@ class DatabaseService(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL("""
+        db.execSQL(
+            """
             CREATE TABLE $TABLE_USER (
                 $COL_ID TEXT PRIMARY KEY,
                 $COL_USER_EMAIL TEXT NOT NULL,
@@ -127,7 +128,8 @@ class DatabaseService(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
                 $COL_IS_DELETED INTEGER DEFAULT 0,
                 $COL_CREATED_AT TEXT DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+            """.trimIndent(),
+        )
 
         db.execSQL("""
             CREATE TABLE $TABLE_SETTINGS (
@@ -137,7 +139,8 @@ class DatabaseService(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
             )
         """)
 
-        db.execSQL("""
+        db.execSQL(
+            """
             CREATE TABLE $TABLE_NUTRITION_GOAL (
                 $COL_ID TEXT PRIMARY KEY,
                 $COL_OWNER_ID TEXT NOT NULL,
@@ -148,9 +151,11 @@ class DatabaseService(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
                 $COL_IS_DELETED INTEGER DEFAULT 0,
                 $COL_CREATED_AT TEXT DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+            """.trimIndent(),
+        )
 
-        db.execSQL("""
+        db.execSQL(
+            """
             CREATE TABLE $TABLE_INGREDIENT (
                 $COL_ID TEXT PRIMARY KEY,
                 $COL_OWNER_ID TEXT NOT NULL,
@@ -164,7 +169,8 @@ class DatabaseService(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
                 $COL_IS_DELETED INTEGER DEFAULT 0,
                 $COL_CREATED_AT TEXT DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+            """.trimIndent(),
+        )
 
         db.execSQL("""
             CREATE TABLE $TABLE_PANTRY_ITEM (
@@ -531,14 +537,19 @@ class DatabaseService(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
             throw IllegalArgumentException("A recipe must have at least one ingredient.")
         }
         
-        val db = writableDatabase
-        db.beginTransaction()
-        try {
+        writableDatabase.runInTransaction {
             upsertRecipe(recipe)
             ingredients.forEach { upsertRecipeIngredient(it) }
-            db.setTransactionSuccessful()
+        }
+    }
+
+    private fun SQLiteDatabase.runInTransaction(block: () -> Unit) {
+        beginTransaction()
+        try {
+            block()
+            setTransactionSuccessful()
         } finally {
-            db.endTransaction()
+            endTransaction()
         }
     }
 
