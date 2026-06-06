@@ -61,14 +61,14 @@ class RecipeDetailFragment : Fragment() {
     private fun showDeleteConfirmation() {
         val r = recipe ?: return
         AlertDialog.Builder(requireContext())
-            .setTitle("Delete Recipe")
-            .setMessage("Are you sure you want to delete '${r.title}'?")
-            .setPositiveButton("Delete") { _, _ ->
+            .setTitle(getString(R.string.delete_recipe_title))
+            .setMessage(getString(R.string.delete_recipe_confirm, r.title))
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 databaseService.deleteRecipe(r.id)
                 Toast.makeText(requireContext(), "Recipe deleted", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
@@ -78,7 +78,13 @@ class RecipeDetailFragment : Fragment() {
         
         recipe?.let { r ->
             binding.tvRecipeTitle.text = r.title
-            binding.tvMacros.text = "${r.totalCalories.toInt()} kcal | P: ${r.totalProtein.toInt()}g | C: ${r.totalCarbs.toInt()}g | F: ${r.totalFat.toInt()}g"
+            binding.tvMacros.text = getString(
+                R.string.macros_format,
+                r.totalCalories.toInt(),
+                r.totalProtein.toInt(),
+                r.totalCarbs.toInt(),
+                r.totalFat.toInt()
+            )
             binding.tvInstructions.text = r.instructions
 
             if (r.imageUrl != null) {
@@ -127,12 +133,12 @@ class RecipeDetailFragment : Fragment() {
                 allIngredients[ri.ingredientId]?.name ?: "Unknown"
             }
             AlertDialog.Builder(requireContext())
-                .setTitle("Insufficient Ingredients")
-                .setMessage("You are missing some ingredients: $names.\n\nWould you like to automatically add them to your pantry and log this meal?")
-                .setPositiveButton("Add & Log") { _, _ ->
+                .setTitle(getString(R.string.insufficient_ingredients))
+                .setMessage(getString(R.string.missing_ingredients_msg, names))
+                .setPositiveButton(getString(R.string.add_and_log)) { _, _ ->
                     autoFillAndLog(r, missingIngredients, pantryItems)
                 }
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(getString(R.string.cancel), null)
                 .show()
         } else {
             executeLogMeal(r)

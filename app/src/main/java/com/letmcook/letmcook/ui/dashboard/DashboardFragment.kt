@@ -227,32 +227,32 @@ class DashboardFragment : Fragment() {
         
         val displayCal = netCal.coerceAtLeast(0.0).toInt()
         val calPercent = if (calorieTarget > 0) (displayCal * 100 / calorieTarget) else 0
-        binding.tvCaloriesPercent.text = "$calPercent%"
+        binding.tvCaloriesPercent.text = getString(R.string.percent_format, calPercent)
         binding.pbCalories.max = calorieTarget
         binding.pbCalories.progress = displayCal
-        binding.tvCaloriesProgress.text = "$displayCal / $calorieTarget kcal"
+        binding.tvCaloriesProgress.text = getString(R.string.calories_format, displayCal, calorieTarget)
 
         val proteinPercent = if (proteinTarget > 0) (totalProtein * 100 / proteinTarget).toInt() else 0
-        binding.tvProteinPercent.text = "$proteinPercent%"
+        binding.tvProteinPercent.text = getString(R.string.percent_format, proteinPercent)
         binding.pbProtein.max = proteinTarget
         binding.pbProtein.progress = totalProtein.toInt()
-        binding.tvProteinProgress.text = "${totalProtein.toInt()} / ${proteinTarget}g"
+        binding.tvProteinProgress.text = getString(R.string.macro_format_g, totalProtein.toInt(), proteinTarget)
 
         val carbPercent = if (carbTarget > 0) (totalCarbs * 100 / carbTarget).toInt() else 0
-        binding.tvCarbsPercent.text = "$carbPercent%"
+        binding.tvCarbsPercent.text = getString(R.string.percent_format, carbPercent)
         binding.pbCarbs.max = carbTarget
         binding.pbCarbs.progress = totalCarbs.toInt()
-        binding.tvCarbsProgress.text = "${totalCarbs.toInt()} / ${carbTarget}g"
+        binding.tvCarbsProgress.text = getString(R.string.macro_format_g, totalCarbs.toInt(), carbTarget)
 
         val fatPercent = if (fatTarget > 0) (totalFat * 100 / fatTarget).toInt() else 0
-        binding.tvFatPercent.text = "$fatPercent%"
+        binding.tvFatPercent.text = getString(R.string.percent_format, fatPercent)
         binding.pbFat.max = fatTarget
         binding.pbFat.progress = totalFat.toInt()
-        binding.tvFatProgress.text = "${totalFat.toInt()} / ${fatTarget}g"
+        binding.tvFatProgress.text = getString(R.string.macro_format_g, totalFat.toInt(), fatTarget)
 
         val waterIntake = databaseService.getWaterIntakeForDate(userId, dateString)
         val waterTarget = 2660
-        binding.tvWaterProgress.text = "${waterIntake}ml / $waterTarget ml"
+        binding.tvWaterProgress.text = getString(R.string.water_format, waterIntake, waterTarget)
 
         var allRecipes = databaseService.getAllRecipes()
         

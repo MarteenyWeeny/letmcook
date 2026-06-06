@@ -71,9 +71,9 @@ class PantryFragment : Fragment() {
         container.addView(input)
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Update Quantity")
+            .setTitle(R.string.update_quantity)
             .setView(container)
-            .setPositiveButton("Update") { _, _ ->
+            .setPositiveButton(R.string.update) { _, _ ->
                 val newQty = input.text.toString().toDoubleOrNull() ?: item.currentQuantity
                 if (newQty >= 0) {
                     item.currentQuantity = newQty
@@ -81,19 +81,19 @@ class PantryFragment : Fragment() {
                     loadPantry()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.cancel, null)
             .show()
     }
 
     private fun showDeleteConfirmation(item: PantryItemModel) {
         AlertDialog.Builder(requireContext())
-            .setTitle("Remove Item")
-            .setMessage("Are you sure you want to remove this item from your pantry?")
-            .setPositiveButton("Remove") { _, _ ->
+            .setTitle(R.string.remove_item)
+            .setMessage(R.string.remove_item_confirm)
+            .setPositiveButton(R.string.remove) { _, _ ->
                 databaseService.deletePantryItem(item.id)
                 loadPantry()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.cancel, null)
             .show()
     }
 

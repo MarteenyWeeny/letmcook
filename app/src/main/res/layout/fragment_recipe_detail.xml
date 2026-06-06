@@ -27,7 +27,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@android:drawable/ic_menu_gallery" />
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:contentDescription="@string/desc_recipe_image" />
 
                 <View
                     android:layout_width="match_parent"
@@ -49,6 +50,7 @@
                     android:layout_margin="16dp"
                     android:background="@drawable/circle_glass"
                     android:src="@android:drawable/ic_menu_revert"
+                    android:contentDescription="@string/desc_back"
                     app:tint="@color/white" />
 
                 <ImageButton
@@ -59,6 +61,7 @@
                     android:layout_margin="16dp"
                     android:background="@drawable/circle_glass"
                     android:src="@android:drawable/ic_menu_delete"
+                    android:contentDescription="@string/desc_delete_recipe"
                     app:tint="@color/white" />
 
                 <LinearLayout
@@ -115,8 +118,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ingredients"
-                            android:textColor="@color/slate_dark"
+                            android:text="@string/ingredients"
+                            android:textColor="@color/food_on_surface"
                             android:textSize="20sp"
                             android:textStyle="bold" />
 
@@ -152,8 +155,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Preparation"
-                            android:textColor="@color/slate_dark"
+                            android:text="@string/preparation"
+                            android:textColor="@color/food_on_surface"
                             android:textSize="20sp"
                             android:textStyle="bold" />
 
@@ -187,7 +190,7 @@
             android:id="@+id/btnCookedThis"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Eat"
+            android:text="@string/eat"
             android:textAllCaps="false"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -200,7 +203,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Add to Grocery List"
+            android:text="@string/add_to_grocery_list"
             android:textAllCaps="false"
             android:textColor="@color/slate_medium" />
 

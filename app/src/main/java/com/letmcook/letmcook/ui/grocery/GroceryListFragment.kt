@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.letmcook.letmcook.databinding.FragmentGroceryListBinding
+import com.letmcook.letmcook.R
 import com.letmcook.letmcook.models.GroceryItemModel
 import com.letmcook.letmcook.models.IngredientModel
 import com.letmcook.letmcook.models.PantryItemModel
@@ -73,16 +74,16 @@ class GroceryListFragment : Fragment() {
         container.addView(input)
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Move to Pantry")
-            .setMessage("Enter the amount to transfer:")
+            .setTitle(getString(R.string.move_to_pantry))
+            .setMessage(getString(R.string.enter_amount_transfer))
             .setView(container)
-            .setPositiveButton("Move") { _, _ ->
+            .setPositiveButton(getString(R.string.move)) { _, _ ->
                 val moveAmount = input.text.toString().toDoubleOrNull() ?: 0.0
                 if (moveAmount > 0) {
                     performMoveToPantry(item, moveAmount)
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
@@ -124,9 +125,9 @@ class GroceryListFragment : Fragment() {
         if (allItems.isEmpty()) return
         
         AlertDialog.Builder(requireContext())
-            .setTitle("Move All to Pantry")
-            .setMessage("Are you sure you want to move all items in this list to your pantry?")
-            .setPositiveButton("Move All") { _, _ ->
+            .setTitle(getString(R.string.move_all_to_pantry))
+            .setMessage(getString(R.string.move_all_confirm))
+            .setPositiveButton(getString(R.string.move_all)) { _, _ ->
                 allItems.forEach { (item, _) ->
                     // Logic similar to handleMoveToPantry but without toast/reload in loop
                     moveSingleItemToPantrySilently(item)
@@ -134,7 +135,7 @@ class GroceryListFragment : Fragment() {
                 Toast.makeText(requireContext(), "All items moved to pantry", Toast.LENGTH_SHORT).show()
                 loadGroceryList()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
@@ -171,9 +172,9 @@ class GroceryListFragment : Fragment() {
         container.addView(input)
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Update Quantity")
+            .setTitle(getString(R.string.update_quantity))
             .setView(container)
-            .setPositiveButton("Update") { _, _ ->
+            .setPositiveButton(getString(R.string.update)) { _, _ ->
                 val newQty = input.text.toString().toDoubleOrNull() ?: item.quantity
                 if (newQty >= 0) {
                     val userId = sessionManager.getUserId() ?: "default_user"
@@ -182,7 +183,7 @@ class GroceryListFragment : Fragment() {
                     loadGroceryList()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
@@ -210,7 +211,7 @@ class GroceryListFragment : Fragment() {
         // "All" chip
         val allChip = Chip(requireContext()).apply {
             id = View.generateViewId()
-            text = "All"
+            text = getString(R.string.all)
             isCheckable = true
             isChecked = selectedCategory == null
         }
@@ -230,7 +231,7 @@ class GroceryListFragment : Fragment() {
             val checkedId = checkedIds.firstOrNull()
             if (checkedId != null) {
                 val chip = group.findViewById<Chip>(checkedId)
-                selectedCategory = if (chip.text == "All") null else chip.text.toString()
+                selectedCategory = if (chip.text == getString(R.string.all)) null else chip.text.toString()
                 filterList()
             } else {
                 selectedCategory = null
@@ -250,15 +251,15 @@ class GroceryListFragment : Fragment() {
 
     private fun showDeleteDialog(item: GroceryItemModel) {
         AlertDialog.Builder(requireContext())
-            .setTitle("Delete Item")
-            .setMessage("Are you sure you want to remove this from your grocery list?")
-            .setPositiveButton("Delete") { _, _ ->
+            .setTitle(getString(R.string.delete_item_title))
+            .setMessage(getString(R.string.delete_item_confirm))
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 val userId = sessionManager.getUserId() ?: "default_user"
                 databaseService.deleteGroceryItemByIngredient(userId, item.ingredientId)
                 Toast.makeText(requireContext(), "Item removed", Toast.LENGTH_SHORT).show()
                 loadGroceryList()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 

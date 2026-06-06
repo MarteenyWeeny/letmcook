@@ -14,7 +14,7 @@ class GroceryAdapter(
     private val onEditClick: (GroceryItemModel) -> Unit,
     private val onDeleteClick: (GroceryItemModel) -> Unit,
     private val onMoveClick: (GroceryItemModel) -> Unit,
-    private val onMoveAllClick: (GroceryItemModel) -> Unit
+    private val onMoveAllClick: (GroceryItemModel) -> Unit,
 ) : RecyclerView.Adapter<GroceryAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -31,23 +31,24 @@ class GroceryAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val (item, ing) = items[position]
-        holder.tvName.text = ing?.name ?: "Unknown"
-        holder.tvCategory.text = ing?.category ?: "Other"
-        holder.tvQuantity.text = "${item.quantity}${ing?.unitOfMeasure ?: ""}"
+        val context = holder.itemView.context
+        holder.tvName.text = ing?.name ?: context.getString(R.string.unknown)
+        holder.tvCategory.text = ing?.category ?: context.getString(R.string.other)
+        holder.tvQuantity.text = context.getString(R.string.qty_format, item.quantity.toString(), ing?.unitOfMeasure ?: "")
         
         holder.btnMore.setOnClickListener { view ->
             val popup = android.widget.PopupMenu(view.context, view)
-            popup.menu.add("Edit Amount")
-            popup.menu.add("Move Amount to Pantry")
-            popup.menu.add("Move All to Pantry")
-            popup.menu.add("Delete Item")
+            popup.menu.add(context.getString(R.string.edit_amount))
+            popup.menu.add(context.getString(R.string.move_amount_to_pantry))
+            popup.menu.add(context.getString(R.string.move_all_to_pantry_menu))
+            popup.menu.add(context.getString(R.string.delete_item))
             
             popup.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.title) {
-                    "Edit Amount" -> onEditClick(item)
-                    "Move Amount to Pantry" -> onMoveClick(item)
-                    "Move All to Pantry" -> onMoveAllClick(item)
-                    "Delete Item" -> onDeleteClick(item)
+                    context.getString(R.string.edit_amount) -> onEditClick(item)
+                    context.getString(R.string.move_amount_to_pantry) -> onMoveClick(item)
+                    context.getString(R.string.move_all_to_pantry_menu) -> onMoveAllClick(item)
+                    context.getString(R.string.delete_item) -> onDeleteClick(item)
                 }
                 true
             }

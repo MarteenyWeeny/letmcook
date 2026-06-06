@@ -12,7 +12,7 @@ class PantryAdapter(
     private var items: List<Pair<PantryItemModel, IngredientModel>>,
     private val onItemClick: (PantryItemModel) -> Unit,
     private val onEditClick: (PantryItemModel) -> Unit,
-    private val onDeleteClick: (PantryItemModel) -> Unit
+    private val onDeleteClick: (PantryItemModel) -> Unit,
 ) : RecyclerView.Adapter<PantryAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ItemPantryBinding) : RecyclerView.ViewHolder(binding.root)
@@ -24,22 +24,29 @@ class PantryAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val (item, ingredient) = items[position]
+        val context = holder.itemView.context
         holder.binding.tvIngredientName.text = ingredient.name
-        holder.binding.tvQuantity.text = "${item.currentQuantity}${ingredient.unitOfMeasure ?: ""}"
-        holder.binding.tvCategory.text = ingredient.category ?: "Other"
-        holder.binding.tvExpDate.text = item.expirationDate?.let { "Exp: $it" } ?: ""
+        holder.binding.tvQuantity.text = context.getString(
+            R.string.qty_format,
+            item.currentQuantity.toString(),
+            ingredient.unitOfMeasure ?: ""
+        )
+        holder.binding.tvCategory.text = ingredient.category ?: context.getString(R.string.other)
+        holder.binding.tvExpDate.text = item.expirationDate?.let {
+            context.getString(R.string.exp_date_format, it)
+        } ?: ""
         
         holder.itemView.setOnClickListener { onItemClick(item) }
 
         holder.binding.btnMore.setOnClickListener { view ->
             val popup = android.widget.PopupMenu(view.context, view)
-            popup.menu.add("Edit Amount")
-            popup.menu.add("Delete Item")
+            popup.menu.add(context.getString(R.string.edit_amount))
+            popup.menu.add(context.getString(R.string.delete_item))
             
             popup.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.title) {
-                    "Edit Amount" -> onEditClick(item)
-                    "Delete Item" -> onDeleteClick(item)
+                    context.getString(R.string.edit_amount) -> onEditClick(item)
+                    context.getString(R.string.delete_item) -> onDeleteClick(item)
                 }
                 true
             }

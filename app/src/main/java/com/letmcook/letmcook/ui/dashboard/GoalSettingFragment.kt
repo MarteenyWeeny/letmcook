@@ -45,7 +45,7 @@ class GoalSettingFragment : Fragment() {
 
     private fun setupActivitySpinner() {
         val levels = arrayOf("Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, levels)
+        val adapter = ArrayAdapter(requireContext(), R.layout.item_dropdown, levels)
         binding.spinnerActivity.setAdapter(adapter)
         // Default value
         binding.spinnerActivity.setText(levels[0], false)
@@ -69,9 +69,9 @@ class GoalSettingFragment : Fragment() {
 
         // Mifflin-St Jeor
         val bmr = if (isMale) {
-            10 * weight + 6.25 * height - 5 * age + 5
+            (10 * weight) + (6.25 * height) - (5 * age) + 5
         } else {
-            10 * weight + 6.25 * height - 5 * age - 161
+            (10 * weight) + (6.25 * height) - (5 * age) - 161
         }
 
         val activityMultiplier = when (activityLevel) {
@@ -99,7 +99,7 @@ class GoalSettingFragment : Fragment() {
             proteinTargetGrams = proteinGrams,
             carbTargetGrams = carbGrams,
             fatTargetGrams = fatGrams,
-            createdAt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+            createdAt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date()),
         )
 
         databaseService.upsertNutritionGoal(goal)
