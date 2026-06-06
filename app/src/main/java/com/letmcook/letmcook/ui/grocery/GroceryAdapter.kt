@@ -12,7 +12,9 @@ import com.letmcook.letmcook.models.IngredientModel
 class GroceryAdapter(
     private var items: List<Pair<GroceryItemModel, IngredientModel?>>,
     private val onEditClick: (GroceryItemModel) -> Unit,
-    private val onDeleteClick: (GroceryItemModel) -> Unit
+    private val onDeleteClick: (GroceryItemModel) -> Unit,
+    private val onMoveClick: (GroceryItemModel) -> Unit,
+    private val onMoveAllClick: (GroceryItemModel) -> Unit
 ) : RecyclerView.Adapter<GroceryAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -36,11 +38,15 @@ class GroceryAdapter(
         holder.btnMore.setOnClickListener { view ->
             val popup = android.widget.PopupMenu(view.context, view)
             popup.menu.add("Edit Amount")
+            popup.menu.add("Move Amount to Pantry")
+            popup.menu.add("Move All to Pantry")
             popup.menu.add("Delete Item")
             
             popup.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.title) {
                     "Edit Amount" -> onEditClick(item)
+                    "Move Amount to Pantry" -> onMoveClick(item)
+                    "Move All to Pantry" -> onMoveAllClick(item)
                     "Delete Item" -> onDeleteClick(item)
                 }
                 true

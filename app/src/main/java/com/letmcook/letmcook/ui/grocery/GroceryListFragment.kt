@@ -14,8 +14,11 @@ import com.google.android.material.chip.Chip
 import com.letmcook.letmcook.databinding.FragmentGroceryListBinding
 import com.letmcook.letmcook.models.GroceryItemModel
 import com.letmcook.letmcook.models.IngredientModel
+import com.letmcook.letmcook.models.PantryItemModel
 import com.letmcook.letmcook.services.DatabaseService
 import com.letmcook.letmcook.services.SessionManager
+import java.text.SimpleDateFormat
+import java.util.*
 
 class GroceryListFragment : Fragment() {
 
@@ -39,6 +42,10 @@ class GroceryListFragment : Fragment() {
 
         setupRecyclerView()
         loadGroceryList()
+
+        binding.btnMoveAllToPantry.setOnClickListener {
+            showMoveAllConfirmation()
+        }
     }
 
     private fun setupRecyclerView() {
@@ -46,9 +53,111 @@ class GroceryListFragment : Fragment() {
             showUpdateQuantityDialog(item)
         }, { item ->
             showDeleteDialog(item)
+        }, { item ->
+            handleMoveToPantry(item)
+        }, { item ->
+            performMoveToPantry(item, item.quantity)
         })
         binding.rvGrocery.layoutManager = LinearLayoutManager(requireContext())
         binding.rvGrocery.adapter = adapter
+    }
+
+    private fun handleMoveToPantry(item: GroceryItemModel) {
+        val input = EditText(requireContext())
+        input.setText(item.quantity.toString())
+        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        
+        val container = LinearLayout(requireContext())
+        container.orientation = LinearLayout.VERTICAL
+        container.setPadding(48, 16, 48, 16)
+        container.addView(input)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Move to Pantry")
+            .setMessage("Enter the amount to transfer:")
+            .setView(container)
+            .setPositiveButton("Move") { _, _ ->
+                val moveAmount = input.text.toString().toDoubleOrNull() ?: 0.0
+                if (moveAmount > 0) {
+                    performMoveToPantry(item, moveAmount)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun performMoveToPantry(item: GroceryItemModel, moveAmount: Double) {
+        val userId = sessionManager.getUserId() ?: "default_user"
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        
+        // 1. Add to Pantry
+        val pantryItems = databaseService.getPantryItems(userId)
+        val existingPantry = pantryItems.find { it.ingredientId == item.ingredientId }
+        if (existingPantry != null) {
+            existingPantry.currentQuantity += moveAmount
+            databaseService.upsertPantryItem(existingPantry)
+        } else {
+            val newItem = PantryItemModel(
+                id = UUID.randomUUID().toString(),
+                ownerId = userId,
+                ingredientId = item.ingredientId,
+                currentQuantity = moveAmount,
+                createdAt = timestamp
+            )
+            databaseService.upsertPantryItem(newItem)
+        }
+        
+        // 2. Update Grocery List
+        if (moveAmount >= item.quantity) {
+            databaseService.deleteGroceryItemByIngredient(userId, item.ingredientId)
+        } else {
+            val remaining = item.quantity - moveAmount
+            databaseService.deleteGroceryItemByIngredient(userId, item.ingredientId)
+            databaseService.addOrUpdateGroceryItem(userId, item.ingredientId, remaining)
+        }
+
+        Toast.makeText(requireContext(), "Moved to Pantry", Toast.LENGTH_SHORT).show()
+        loadGroceryList()
+    }
+
+    private fun showMoveAllConfirmation() {
+        if (allItems.isEmpty()) return
+        
+        AlertDialog.Builder(requireContext())
+            .setTitle("Move All to Pantry")
+            .setMessage("Are you sure you want to move all items in this list to your pantry?")
+            .setPositiveButton("Move All") { _, _ ->
+                allItems.forEach { (item, _) ->
+                    // Logic similar to handleMoveToPantry but without toast/reload in loop
+                    moveSingleItemToPantrySilently(item)
+                }
+                Toast.makeText(requireContext(), "All items moved to pantry", Toast.LENGTH_SHORT).show()
+                loadGroceryList()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun moveSingleItemToPantrySilently(item: GroceryItemModel) {
+        val userId = sessionManager.getUserId() ?: "default_user"
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        val pantryItems = databaseService.getPantryItems(userId)
+        val existing = pantryItems.find { it.ingredientId == item.ingredientId }
+        
+        if (existing != null) {
+            existing.currentQuantity += item.quantity
+            databaseService.upsertPantryItem(existing)
+        } else {
+            val newItem = PantryItemModel(
+                id = UUID.randomUUID().toString(),
+                ownerId = userId,
+                ingredientId = item.ingredientId,
+                currentQuantity = item.quantity,
+                createdAt = timestamp
+            )
+            databaseService.upsertPantryItem(newItem)
+        }
+        databaseService.deleteGroceryItemByIngredient(userId, item.ingredientId)
     }
 
     private fun showUpdateQuantityDialog(item: GroceryItemModel) {
