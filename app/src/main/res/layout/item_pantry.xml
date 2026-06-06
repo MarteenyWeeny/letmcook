@@ -32,10 +32,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/food_primary"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnMore"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="8dp"
             tools:text="500g" />
 
         <TextView
@@ -44,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="@color/food_on_surface_variant"
-            android:textSize="12sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvIngredientName"
             tools:text="Protein" />
@@ -56,9 +57,21 @@
             android:layout_marginTop="4dp"
             android:textColor="@color/error_red"
             android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvQuantity"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCategory"
             tools:text="Exp: 2026-06-10" />
+
+        <ImageButton
+            android:id="@+id/btnMore"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_more"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?attr/colorOnSurfaceVariant" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

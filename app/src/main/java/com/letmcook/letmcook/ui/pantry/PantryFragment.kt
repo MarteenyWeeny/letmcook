@@ -50,11 +50,52 @@ class PantryFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = PantryAdapter(emptyList()) { item ->
-            // Handle edit/delete
-        }
+        adapter = PantryAdapter(emptyList(), { item ->
+            // Handle full item click if needed
+        }, { item ->
+            showUpdateQuantityDialog(item)
+        }, { item ->
+            showDeleteConfirmation(item)
+        })
         binding.rvPantry.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPantry.adapter = adapter
+    }
+
+    private fun showUpdateQuantityDialog(item: PantryItemModel) {
+        val input = EditText(requireContext())
+        input.setText(item.currentQuantity.toString())
+        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        
+        val container = android.widget.LinearLayout(requireContext())
+        container.orientation = android.widget.LinearLayout.VERTICAL
+        container.setPadding(48, 16, 48, 16)
+        container.addView(input)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Update Quantity")
+            .setView(container)
+            .setPositiveButton("Update") { _, _ ->
+                val newQty = input.text.toString().toDoubleOrNull() ?: item.currentQuantity
+                if (newQty >= 0) {
+                    item.currentQuantity = newQty
+                    databaseService.upsertPantryItem(item)
+                    loadPantry()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showDeleteConfirmation(item: PantryItemModel) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Remove Item")
+            .setMessage("Are you sure you want to remove this item from your pantry?")
+            .setPositiveButton("Remove") { _, _ ->
+                databaseService.deletePantryItem(item.id)
+                loadPantry()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun loadPantry() {
@@ -127,7 +168,7 @@ class PantryFragment : Fragment() {
         
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, names)
+        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.item_dropdown, names)
         dialogBinding.spinnerIngredients.setAdapter(spinnerAdapter)
 
         dialogBinding.btnCancel.setOnClickListener { dialog.dismiss() }
