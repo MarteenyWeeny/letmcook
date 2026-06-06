@@ -39,9 +39,9 @@ class RecipeAdapter(
 
         // Change color based on match percentage
         val color = when {
-            percent >= 80 -> android.graphics.Color.parseColor("#10b981") // accent_green
-            percent >= 50 -> android.graphics.Color.parseColor("#f59e0b") // accent_orange
-            else -> android.graphics.Color.parseColor("#dc2626") // error_red
+            percent >= 80 -> holder.itemView.context.getColor(R.color.food_secondary)
+            percent >= 50 -> holder.itemView.context.getColor(R.color.food_tertiary)
+            else -> holder.itemView.context.getColor(R.color.error_red)
         }
         holder.binding.cpMatchScore.setIndicatorColor(color)
 

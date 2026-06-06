@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -40,11 +42,39 @@ class GroceryListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = GroceryAdapter(emptyList()) { item ->
+        adapter = GroceryAdapter(emptyList(), { item ->
+            showUpdateQuantityDialog(item)
+        }, { item ->
             showDeleteDialog(item)
-        }
+        })
         binding.rvGrocery.layoutManager = LinearLayoutManager(requireContext())
         binding.rvGrocery.adapter = adapter
+    }
+
+    private fun showUpdateQuantityDialog(item: GroceryItemModel) {
+        val input = EditText(requireContext())
+        input.setText(item.quantity.toString())
+        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        
+        val container = LinearLayout(requireContext())
+        container.orientation = LinearLayout.VERTICAL
+        container.setPadding(48, 16, 48, 16)
+        container.addView(input)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Update Quantity")
+            .setView(container)
+            .setPositiveButton("Update") { _, _ ->
+                val newQty = input.text.toString().toDoubleOrNull() ?: item.quantity
+                if (newQty >= 0) {
+                    val userId = sessionManager.getUserId() ?: "default_user"
+                    databaseService.deleteGroceryItemByIngredient(userId, item.ingredientId)
+                    databaseService.addOrUpdateGroceryItem(userId, item.ingredientId, newQty)
+                    loadGroceryList()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun loadGroceryList() {
@@ -94,7 +124,6 @@ class GroceryListFragment : Fragment() {
                 selectedCategory = if (chip.text == "All") null else chip.text.toString()
                 filterList()
             } else {
-                // If nothing is selected, default back to All
                 selectedCategory = null
                 filterList()
             }
@@ -116,7 +145,6 @@ class GroceryListFragment : Fragment() {
             .setMessage("Are you sure you want to remove this from your grocery list?")
             .setPositiveButton("Delete") { _, _ ->
                 val userId = sessionManager.getUserId() ?: "default_user"
-                // Delete all entries for this ingredient to handle merged view correctly
                 databaseService.deleteGroceryItemByIngredient(userId, item.ingredientId)
                 Toast.makeText(requireContext(), "Item removed", Toast.LENGTH_SHORT).show()
                 loadGroceryList()
