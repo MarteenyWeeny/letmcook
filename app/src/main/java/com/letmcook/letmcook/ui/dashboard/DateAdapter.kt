@@ -38,13 +38,13 @@ class DateAdapter(
         val isSelected = fullDateSdf.format(date) == fullDateSdf.format(selectedDate)
 
         if (isSelected) {
-            holder.llItem.setBackgroundResource(R.drawable.circle_dark)
+            holder.llItem.setBackgroundResource(R.drawable.circle_primary)
             holder.tvDayName.setTextColor(holder.itemView.context.getColor(R.color.white))
             holder.tvDayNumber.setTextColor(holder.itemView.context.getColor(R.color.white))
         } else {
             holder.llItem.background = null
-            holder.tvDayName.setTextColor(holder.itemView.context.getColor(R.color.slate_medium))
-            holder.tvDayNumber.setTextColor(holder.itemView.context.getColor(R.color.slate_dark))
+            holder.tvDayName.setTextColor(holder.itemView.context.getColor(R.color.food_on_surface_variant))
+            holder.tvDayNumber.setTextColor(holder.itemView.context.getColor(R.color.food_on_surface))
         }
 
         holder.itemView.setOnClickListener {

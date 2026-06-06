@@ -11,7 +11,9 @@ import android.widget.Spinner
 import com.google.android.material.chip.Chip
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.letmcook.letmcook.R
 import com.letmcook.letmcook.databinding.FragmentPantryBinding
+import com.letmcook.letmcook.databinding.DialogAddPantryItemBinding
 import com.letmcook.letmcook.models.IngredientModel
 import com.letmcook.letmcook.models.PantryItemModel
 import com.letmcook.letmcook.services.DatabaseService
@@ -118,41 +120,38 @@ class PantryFragment : Fragment() {
         val ingredients = databaseService.getAllIngredients()
         val names = ingredients.map { it.name }
 
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Add to Pantry")
+        val dialogBinding = DialogAddPantryItemBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogBinding.root)
+            .create()
         
-        val spinner = Spinner(requireContext())
-        spinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, names)
-        
-        val quantityInput = EditText(requireContext())
-        quantityInput.hint = "Quantity"
-        quantityInput.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        val container = android.widget.LinearLayout(requireContext())
-        container.orientation = android.widget.LinearLayout.VERTICAL
-        container.setPadding(48, 16, 48, 16)
-        container.addView(spinner)
-        container.addView(quantityInput)
-        
-        builder.setView(container)
-        builder.setPositiveButton("Add") { _, _ ->
-            val selectedIdx = spinner.selectedItemPosition
-            val quantity = quantityInput.text.toString().toDoubleOrNull() ?: 0.0
-            val ingredient = ingredients[selectedIdx]
-            
-            val userId = sessionManager.getUserId() ?: "default_user"
-            val newItem = PantryItemModel(
-                id = UUID.randomUUID().toString(),
-                ownerId = userId,
-                ingredientId = ingredient.id,
-                currentQuantity = quantity,
-                createdAt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-            )
-            databaseService.upsertPantryItem(newItem)
-            loadPantry()
+        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, names)
+        dialogBinding.spinnerIngredients.setAdapter(spinnerAdapter)
+
+        dialogBinding.btnCancel.setOnClickListener { dialog.dismiss() }
+
+        dialogBinding.btnAdd.setOnClickListener {
+            val selectedName = dialogBinding.spinnerIngredients.text.toString()
+            val ingredient = ingredients.find { it.name == selectedName }
+            val quantity = dialogBinding.etQuantity.text.toString().toDoubleOrNull() ?: 0.0
+
+            if (ingredient != null && quantity > 0) {
+                val userId = sessionManager.getUserId() ?: "default_user"
+                val newItem = PantryItemModel(
+                    id = UUID.randomUUID().toString(),
+                    ownerId = userId,
+                    ingredientId = ingredient.id,
+                    currentQuantity = quantity,
+                    createdAt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+                )
+                databaseService.upsertPantryItem(newItem)
+                loadPantry()
+                dialog.dismiss()
+            }
         }
-        builder.setNegativeButton("Cancel", null)
-        builder.show()
+        dialog.show()
     }
 
     override fun onDestroyView() {

@@ -59,8 +59,6 @@ class DashboardFragment : Fragment() {
         
         // Temporary profile pic
         binding.profileCard.setImageResource(android.R.drawable.ic_menu_myplaces)
-        binding.profileCard.setPadding(8, 8, 8, 8)
-        binding.profileCard.background = requireContext().getDrawable(R.drawable.circle_dark)
     }
 
     private fun setupWaterCard() {
@@ -120,7 +118,7 @@ class DashboardFragment : Fragment() {
             loadAllData()
         }
         
-        binding.rvDateSelector.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.rvDateSelector.layoutManager = androidx.recyclerview.widget.GridLayoutManager(requireContext(), 7)
         binding.rvDateSelector.adapter = dateAdapter
         
         refreshDateStrip()
@@ -151,12 +149,10 @@ class DashboardFragment : Fragment() {
     private fun refreshDateStrip() {
         val dates = mutableListOf<Date>()
         val calendar = Calendar.getInstance()
-        calendar.time = selectedDate
         
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-        if (calendar.time.after(selectedDate)) {
-            calendar.add(Calendar.DAY_OF_YEAR, -7)
-        }
+        // Center the 7-day window on today
+        calendar.time = Date()
+        calendar.add(Calendar.DAY_OF_YEAR, -3)
         
         repeat(7) {
             dates.add(calendar.time)
@@ -285,6 +281,8 @@ class DashboardFragment : Fragment() {
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogBinding.root)
             .create()
+            
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val userId = sessionManager.getUserId() ?: ""
         val user = databaseService.getUser(userId)

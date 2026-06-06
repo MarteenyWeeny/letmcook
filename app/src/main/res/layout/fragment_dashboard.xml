@@ -9,6 +9,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/slate_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,12 +83,10 @@
             <!-- Horizontal Date Selector -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDateSelector"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
-                android:layout_gravity="center"
-                android:clipToPadding="false"
-                android:orientation="horizontal" />
+                android:clipToPadding="false" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -133,8 +132,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Calories"
-                                android:textColor="@color/slate_medium"
-                                android:textSize="14sp"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="16sp"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -153,8 +152,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:text="0%"
-                            android:textColor="@color/slate_dark"
-                            android:textSize="24sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="28sp"
                             android:textStyle="bold" />
 
                         <ProgressBar
@@ -170,8 +169,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textColor="@color/slate_medium"
-                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp"
                             tools:text="0 / 2000 kcal" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -203,8 +202,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Protein"
-                                android:textColor="@color/slate_medium"
-                                android:textSize="14sp"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="16sp"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -223,8 +222,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:text="0%"
-                            android:textColor="@color/slate_dark"
-                            android:textSize="24sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="28sp"
                             android:textStyle="bold" />
 
                         <ProgressBar
@@ -240,8 +239,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textColor="@color/slate_medium"
-                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp"
                             tools:text="0 / 120g" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -272,8 +271,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Fats"
-                                android:textColor="@color/slate_medium"
-                                android:textSize="14sp"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="16sp"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -292,8 +291,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:text="0%"
-                            android:textColor="@color/slate_dark"
-                            android:textSize="24sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="28sp"
                             android:textStyle="bold" />
 
                         <ProgressBar
@@ -309,8 +308,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textColor="@color/slate_medium"
-                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp"
                             tools:text="0 / 60g" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -341,8 +340,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Carbs"
-                                android:textColor="@color/slate_medium"
-                                android:textSize="14sp"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="16sp"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -361,8 +360,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:text="0%"
-                            android:textColor="@color/slate_dark"
-                            android:textSize="24sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="28sp"
                             android:textStyle="bold" />
 
                         <ProgressBar
@@ -378,8 +377,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textColor="@color/slate_medium"
-                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp"
                             tools:text="0 / 200g" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -394,7 +393,7 @@
                 android:layout_marginBottom="24dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="@color/slate_dark"
+                app:cardBackgroundColor="@color/accent_blue"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp">
 
@@ -459,7 +458,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:text="Suggestions For You"
-                android:textColor="@color/slate_dark"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -474,7 +473,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:text="Fitness Planner"
-                android:textColor="@color/slate_dark"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
