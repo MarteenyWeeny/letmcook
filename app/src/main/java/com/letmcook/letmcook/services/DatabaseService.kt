@@ -465,6 +465,14 @@ class DatabaseService(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         db.insertWithOnConflict(TABLE_PANTRY_ITEM, null, values, SQLiteDatabase.CONFLICT_REPLACE)
     }
 
+    fun deletePantryItem(id: String) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COL_IS_DELETED, 1)
+        }
+        db.update(TABLE_PANTRY_ITEM, values, "$COL_ID = ?", arrayOf(id))
+    }
+
     // Recipes
     fun getAllRecipes(): List<RecipeModel> {
         val db = readableDatabase

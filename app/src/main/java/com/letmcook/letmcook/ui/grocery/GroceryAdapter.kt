@@ -11,13 +11,16 @@ import com.letmcook.letmcook.models.IngredientModel
 
 class GroceryAdapter(
     private var items: List<Pair<GroceryItemModel, IngredientModel?>>,
-    private val onLongClick: (GroceryItemModel) -> Unit
+    private val onEditClick: (GroceryItemModel) -> Unit,
+    private val onDeleteClick: (GroceryItemModel) -> Unit
 ) : RecyclerView.Adapter<GroceryAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvName: TextView = view.findViewById(R.id.tvIngredientName)
         val tvCategory: TextView = view.findViewById(R.id.tvCategory)
         val tvQuantity: TextView = view.findViewById(R.id.tvQuantity)
+        val btnEdit: View = view.findViewById(R.id.btnEdit)
+        val btnDelete: View = view.findViewById(R.id.btnDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,10 +34,8 @@ class GroceryAdapter(
         holder.tvCategory.text = ing?.category ?: "Other"
         holder.tvQuantity.text = "${item.quantity}${ing?.unitOfMeasure ?: ""}"
         
-        holder.itemView.setOnLongClickListener {
-            onLongClick(item)
-            true
-        }
+        holder.btnEdit.setOnClickListener { onEditClick(item) }
+        holder.btnDelete.setOnClickListener { onDeleteClick(item) }
     }
 
     override fun getItemCount() = items.size

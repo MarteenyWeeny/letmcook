@@ -9,7 +9,9 @@ import com.letmcook.letmcook.models.PantryItemModel
 
 class PantryAdapter(
     private var items: List<Pair<PantryItemModel, IngredientModel>>,
-    private val onItemClick: (PantryItemModel) -> Unit
+    private val onItemClick: (PantryItemModel) -> Unit,
+    private val onEditClick: (PantryItemModel) -> Unit,
+    private val onDeleteClick: (PantryItemModel) -> Unit
 ) : RecyclerView.Adapter<PantryAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ItemPantryBinding) : RecyclerView.ViewHolder(binding.root)
@@ -27,6 +29,8 @@ class PantryAdapter(
         holder.binding.tvExpDate.text = item.expirationDate?.let { "Exp: $it" } ?: ""
         
         holder.itemView.setOnClickListener { onItemClick(item) }
+        holder.binding.btnEdit.setOnClickListener { onEditClick(item) }
+        holder.binding.btnDelete.setOnClickListener { onDeleteClick(item) }
     }
 
     override fun getItemCount() = items.size
