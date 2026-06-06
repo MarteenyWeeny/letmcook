@@ -40,11 +40,41 @@ class GroceryListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = GroceryAdapter(emptyList()) { item ->
+        adapter = GroceryAdapter(emptyList(), { item ->
+            showUpdateQuantityDialog(item)
+        }, { item ->
             showDeleteDialog(item)
-        }
+        })
         binding.rvGrocery.layoutManager = LinearLayoutManager(requireContext())
         binding.rvGrocery.adapter = adapter
+    }
+
+    private fun showUpdateQuantityDialog(item: GroceryItemModel) {
+        val input = android.widget.EditText(requireContext())
+        input.setText(item.quantity.toString())
+        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        
+        val container = android.widget.LinearLayout(requireContext())
+        container.orientation = android.widget.LinearLayout.VERTICAL
+        container.setPadding(48, 16, 48, 16)
+        container.addView(input)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Update Quantity")
+            .setView(container)
+            .setPositiveButton("Update") { _, _ ->
+                val newQty = input.text.toString().toDoubleOrNull() ?: item.quantity
+                if (newQty >= 0) {
+                    // Update all entries for this ingredient to handle merged view correctly
+                    val userId = sessionManager.getUserId() ?: "default_user"
+                    // Simple approach: delete existing and add new quantity
+                    databaseService.deleteGroceryItemByIngredient(userId, item.ingredientId)
+                    databaseService.addOrUpdateGroceryItem(userId, item.ingredientId, newQty)
+                    loadGroceryList()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun loadGroceryList() {
