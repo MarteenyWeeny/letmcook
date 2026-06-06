@@ -262,9 +262,18 @@ class DashboardFragment : Fragment() {
             allRecipes = databaseService.getAllRecipes()
         }
 
+        val pantryItems = databaseService.getPantryItems(userId).associateBy { it.ingredientId }
         val suggestions = allRecipes.filter { 
             it.totalCalories <= (remainingCal + 600)
-        }.shuffled().take(5).map { it to 1.0 }
+        }.shuffled().take(5).map { recipe ->
+            val ingredients = databaseService.getRecipeIngredients(recipe.id)
+            val matchCount = ingredients.count { ri ->
+                val pi = pantryItems[ri.ingredientId]
+                pi != null && pi.currentQuantity >= ri.requiredQuantity
+            }
+            val score = if (ingredients.isEmpty()) 0.0 else matchCount.toDouble() / ingredients.size
+            recipe to score
+        }
         
         recipeAdapter.updateData(suggestions)
         dateAdapter.updateSelectedDate(selectedDate)

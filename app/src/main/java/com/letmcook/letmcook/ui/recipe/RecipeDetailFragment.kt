@@ -99,8 +99,9 @@ class RecipeDetailFragment : Fragment() {
             ingredients.forEach { ri ->
                 val ing = allIngredients[ri.ingredientId]
                 val name = ing?.name ?: "Unknown"
-                val inPantry = pantryItems.containsKey(ri.ingredientId)
-                val status = if (inPantry) "[In Pantry]" else "[Missing]"
+                val pi = pantryItems[ri.ingredientId]
+                val hasEnough = pi != null && pi.currentQuantity >= ri.requiredQuantity
+                val status = if (hasEnough) "[In Pantry]" else "[Missing]"
                 ingListText.append("• $name (${ri.requiredQuantity}${ing?.unitOfMeasure ?: ""}) $status\n")
             }
             binding.tvIngredientsList.text = ingListText.toString()

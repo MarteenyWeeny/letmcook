@@ -60,12 +60,14 @@ class RecipeExploreFragment : Fragment() {
     private fun loadRecipes() {
         val userId = sessionManager.getUserId() ?: "default_user"
         allRecipes = databaseService.getAllRecipes()
-        val pantryItems = databaseService.getPantryItems(userId)
-        val pantryIngredientIds = pantryItems.map { it.ingredientId }.toSet()
+        val pantryItems = databaseService.getPantryItems(userId).associateBy { it.ingredientId }
 
         val scoredRecipes = allRecipes.map { recipe ->
             val ingredients = databaseService.getRecipeIngredients(recipe.id)
-            val matchCount = ingredients.count { it.ingredientId in pantryIngredientIds }
+            val matchCount = ingredients.count { ri -> 
+                val pi = pantryItems[ri.ingredientId]
+                pi != null && pi.currentQuantity >= ri.requiredQuantity 
+            }
             val score = if (ingredients.isEmpty()) 0.0 else matchCount.toDouble() / ingredients.size
             recipe to score
         }.sortedByDescending { it.second }
@@ -85,13 +87,15 @@ class RecipeExploreFragment : Fragment() {
 
     private fun filterRecipes(query: String) {
         val userId = sessionManager.getUserId() ?: "default_user"
-        val pantryItems = databaseService.getPantryItems(userId)
-        val pantryIngredientIds = pantryItems.map { it.ingredientId }.toSet()
+        val pantryItems = databaseService.getPantryItems(userId).associateBy { it.ingredientId }
 
         val filtered = allRecipes.filter { it.title.contains(query, ignoreCase = true) }
         val scored = filtered.map { recipe ->
             val ingredients = databaseService.getRecipeIngredients(recipe.id)
-            val matchCount = ingredients.count { it.ingredientId in pantryIngredientIds }
+            val matchCount = ingredients.count { ri ->
+                val pi = pantryItems[ri.ingredientId]
+                pi != null && pi.currentQuantity >= ri.requiredQuantity
+            }
             val score = if (ingredients.isEmpty()) 0.0 else matchCount.toDouble() / ingredients.size
             recipe to score
         }.sortedByDescending { it.second }
