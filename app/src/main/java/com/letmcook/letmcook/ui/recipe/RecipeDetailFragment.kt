@@ -139,6 +139,9 @@ class RecipeDetailFragment : Fragment() {
         }
 
         Toast.makeText(requireContext(), "Meal logged! Pantry updated.", Toast.LENGTH_SHORT).show()
+        
+        // Refresh UI to show updated pantry status
+        loadRecipe(r.id)
     }
 
     private fun handleAddMissing() {
