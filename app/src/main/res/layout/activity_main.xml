@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/bottom_nav_menu"
+        app:paddingBottomSystemWindowInsets="false" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
