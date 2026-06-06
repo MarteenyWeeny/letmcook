@@ -30,7 +30,7 @@ class WorkoutAdapter(
         val workout = workouts[position]
         holder.tvTitle.text = workout.title
         holder.tvType.text = workout.type
-        holder.tvDuration.text = "${workout.durationMinutes} min"
+        holder.tvDuration.text = holder.itemView.context.getString(R.string.duration_min_format, workout.durationMinutes)
         
         holder.cbCompleted.setOnCheckedChangeListener(null)
         holder.cbCompleted.isChecked = workout.isCompleted

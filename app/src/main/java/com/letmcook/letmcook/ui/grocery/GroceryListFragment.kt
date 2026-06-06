@@ -74,7 +74,7 @@ class GroceryListFragment : Fragment() {
         container.addView(input)
 
         AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.move_to_pantry))
+            .setTitle(getString(R.string.moved_to_pantry))
             .setMessage(getString(R.string.enter_amount_transfer))
             .setView(container)
             .setPositiveButton(getString(R.string.move)) { _, _ ->
