@@ -12,6 +12,7 @@ import com.letmcook.letmcook.R
 import com.letmcook.letmcook.databinding.FragmentRecipeDetailBinding
 import com.letmcook.letmcook.models.IntakeModel
 import com.letmcook.letmcook.models.RecipeModel
+import com.letmcook.letmcook.models.PantryItemModel
 import com.letmcook.letmcook.services.DatabaseService
 import com.letmcook.letmcook.services.SessionManager
 import java.text.SimpleDateFormat
@@ -111,6 +112,58 @@ class RecipeDetailFragment : Fragment() {
     private fun handleCookedThis() {
         val r = recipe ?: return
         val userId = sessionManager.getUserId() ?: "default_user"
+        
+        val ingredients = databaseService.getRecipeIngredients(r.id)
+        val pantryItems = databaseService.getPantryItems(userId).associateBy { it.ingredientId }
+        val allIngredients = databaseService.getAllIngredients().associateBy { it.id }
+
+        val missingIngredients = ingredients.filter { ri ->
+            val pi = pantryItems[ri.ingredientId]
+            pi == null || pi.currentQuantity < ri.requiredQuantity
+        }
+
+        if (missingIngredients.isNotEmpty()) {
+            val names = missingIngredients.joinToString(", ") { ri ->
+                allIngredients[ri.ingredientId]?.name ?: "Unknown"
+            }
+            AlertDialog.Builder(requireContext())
+                .setTitle("Insufficient Ingredients")
+                .setMessage("You are missing some ingredients: $names.\n\nWould you like to automatically add them to your pantry and log this meal?")
+                .setPositiveButton("Add & Log") { _, _ ->
+                    autoFillAndLog(r, missingIngredients, pantryItems)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        } else {
+            executeLogMeal(r)
+        }
+    }
+
+    private fun autoFillAndLog(r: RecipeModel, missing: List<com.letmcook.letmcook.models.RecipeIngredientModel>, pantry: Map<String, PantryItemModel>) {
+        val userId = sessionManager.getUserId() ?: "default_user"
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+
+        missing.forEach { ri ->
+            val existing = pantry[ri.ingredientId]
+            if (existing != null) {
+                existing.currentQuantity = ri.requiredQuantity
+                databaseService.upsertPantryItem(existing)
+            } else {
+                val newItem = PantryItemModel(
+                    id = UUID.randomUUID().toString(),
+                    ownerId = userId,
+                    ingredientId = ri.ingredientId,
+                    currentQuantity = ri.requiredQuantity,
+                    createdAt = timestamp
+                )
+                databaseService.upsertPantryItem(newItem)
+            }
+        }
+        executeLogMeal(r)
+    }
+
+    private fun executeLogMeal(r: RecipeModel) {
+        val userId = sessionManager.getUserId() ?: "default_user"
         val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
         val intake = IntakeModel(
@@ -140,8 +193,6 @@ class RecipeDetailFragment : Fragment() {
         }
 
         Toast.makeText(requireContext(), "Meal logged! Pantry updated.", Toast.LENGTH_SHORT).show()
-        
-        // Refresh UI to show updated pantry status
         loadRecipe(r.id)
     }
 
