@@ -1,8 +1,29 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.LetMCook" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Primary Brand Colors -->
+        <item name="colorPrimary">@color/food_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/food_primary_container</item>
+
+        <!-- Secondary Brand Colors -->
+        <item name="colorSecondary">@color/food_secondary</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/food_secondary_container</item>
+
+        <!-- Background and Surface Colors -->
+        <item name="android:windowBackground">@color/food_background</item>
+        <item name="colorSurface">@color/food_surface</item>
+        <item name="colorOnSurface">@color/food_on_surface</item>
+        <item name="colorSurfaceVariant">@color/food_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/food_on_surface_variant</item>
+
+        <!-- Text Colors -->
+        <item name="android:textColorPrimary">@color/food_on_surface</item>
+        <item name="android:textColorSecondary">@color/food_on_surface_variant</item>
+
+        <!-- Dropdown / Menu Styling -->
+        <item name="autoCompleteTextViewStyle">@style/Widget.Material3.AutoCompleteTextView.OutlinedBox</item>
     </style>
 
     <style name="Theme.LetMCook" parent="Base.Theme.LetMCook" />

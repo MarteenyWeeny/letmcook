@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.letmcook.letmcook.R
 import com.letmcook.letmcook.databinding.FragmentAddRecipeBinding
 import com.letmcook.letmcook.models.IngredientModel
 import com.letmcook.letmcook.models.RecipeIngredientModel
@@ -71,9 +72,8 @@ class AddRecipeFragment : Fragment() {
     private fun loadIngredients() {
         allIngredients = databaseService.getAllIngredients()
         val ingredientNames = allIngredients.map { it.name }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, ingredientNames)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerIngredients.adapter = adapter
+        val adapter = ArrayAdapter(requireContext(), R.layout.item_dropdown, ingredientNames)
+        binding.spinnerIngredients.setAdapter(adapter)
     }
 
     private fun setupButtons() {
