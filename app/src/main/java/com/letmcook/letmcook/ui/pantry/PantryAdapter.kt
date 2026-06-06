@@ -29,8 +29,21 @@ class PantryAdapter(
         holder.binding.tvExpDate.text = item.expirationDate?.let { "Exp: $it" } ?: ""
         
         holder.itemView.setOnClickListener { onItemClick(item) }
-        holder.binding.btnEdit.setOnClickListener { onEditClick(item) }
-        holder.binding.btnDelete.setOnClickListener { onDeleteClick(item) }
+        
+        holder.binding.btnMore.setOnClickListener { view ->
+            val popup = android.widget.PopupMenu(view.context, view)
+            popup.menu.add("Edit Amount")
+            popup.menu.add("Delete Item")
+            
+            popup.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.title) {
+                    "Edit Amount" -> onEditClick(item)
+                    "Delete Item" -> onDeleteClick(item)
+                }
+                true
+            }
+            popup.show()
+        }
     }
 
     override fun getItemCount() = items.size

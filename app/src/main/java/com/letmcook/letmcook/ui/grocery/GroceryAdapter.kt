@@ -19,8 +19,7 @@ class GroceryAdapter(
         val tvName: TextView = view.findViewById(R.id.tvIngredientName)
         val tvCategory: TextView = view.findViewById(R.id.tvCategory)
         val tvQuantity: TextView = view.findViewById(R.id.tvQuantity)
-        val btnEdit: View = view.findViewById(R.id.btnEdit)
-        val btnDelete: View = view.findViewById(R.id.btnDelete)
+        val btnMore: View = view.findViewById(R.id.btnMore)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,8 +33,20 @@ class GroceryAdapter(
         holder.tvCategory.text = ing?.category ?: "Other"
         holder.tvQuantity.text = "${item.quantity}${ing?.unitOfMeasure ?: ""}"
         
-        holder.btnEdit.setOnClickListener { onEditClick(item) }
-        holder.btnDelete.setOnClickListener { onDeleteClick(item) }
+        holder.btnMore.setOnClickListener { view ->
+            val popup = android.widget.PopupMenu(view.context, view)
+            popup.menu.add("Edit Amount")
+            popup.menu.add("Delete Item")
+            
+            popup.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.title) {
+                    "Edit Amount" -> onEditClick(item)
+                    "Delete Item" -> onDeleteClick(item)
+                }
+                true
+            }
+            popup.show()
+        }
     }
 
     override fun getItemCount() = items.size
