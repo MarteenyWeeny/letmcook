@@ -16,11 +16,9 @@ import com.letmcook.letmcook.databinding.FragmentGroceryListBinding
 import com.letmcook.letmcook.R
 import com.letmcook.letmcook.models.GroceryItemModel
 import com.letmcook.letmcook.models.IngredientModel
-import com.letmcook.letmcook.models.PantryItemModel
 import com.letmcook.letmcook.services.DatabaseService
 import com.letmcook.letmcook.services.SessionManager
-import java.text.SimpleDateFormat
-import java.util.*
+import com.letmcook.letmcook.ui.dashboard.DashboardFragment
 
 class GroceryListFragment : Fragment() {
 
@@ -90,24 +88,10 @@ class GroceryListFragment : Fragment() {
 
     private fun performMoveToPantry(item: GroceryItemModel, moveAmount: Double) {
         val userId = sessionManager.getUserId() ?: "default_user"
-        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
         
         // 1. Add to Pantry
-        val pantryItems = databaseService.getPantryItems(userId)
-        val existingPantry = pantryItems.find { it.ingredientId == item.ingredientId }
-        if (existingPantry != null) {
-            existingPantry.currentQuantity += moveAmount
-            databaseService.upsertPantryItem(existingPantry)
-        } else {
-            val newItem = PantryItemModel(
-                id = UUID.randomUUID().toString(),
-                ownerId = userId,
-                ingredientId = item.ingredientId,
-                currentQuantity = moveAmount,
-                createdAt = timestamp
-            )
-            databaseService.upsertPantryItem(newItem)
-        }
+        databaseService.addOrUpdatePantryItem(userId, item.ingredientId, moveAmount)
+        DashboardFragment.clearCache()
         
         // 2. Update Grocery List
         if (moveAmount >= item.quantity) {
@@ -142,23 +126,8 @@ class GroceryListFragment : Fragment() {
 
     private fun moveSingleItemToPantrySilently(item: GroceryItemModel) {
         val userId = sessionManager.getUserId() ?: "default_user"
-        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-        val pantryItems = databaseService.getPantryItems(userId)
-        val existing = pantryItems.find { it.ingredientId == item.ingredientId }
-        
-        if (existing != null) {
-            existing.currentQuantity += item.quantity
-            databaseService.upsertPantryItem(existing)
-        } else {
-            val newItem = PantryItemModel(
-                id = UUID.randomUUID().toString(),
-                ownerId = userId,
-                ingredientId = item.ingredientId,
-                currentQuantity = item.quantity,
-                createdAt = timestamp
-            )
-            databaseService.upsertPantryItem(newItem)
-        }
+        databaseService.addOrUpdatePantryItem(userId, item.ingredientId, item.quantity)
+        DashboardFragment.clearCache()
         databaseService.deleteGroceryItemByIngredient(userId, item.ingredientId)
     }
 

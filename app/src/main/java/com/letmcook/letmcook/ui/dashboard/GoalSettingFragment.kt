@@ -103,6 +103,7 @@ class GoalSettingFragment : Fragment() {
         )
 
         databaseService.upsertNutritionGoal(goal)
+        DashboardFragment.clearCache()
         findNavController().navigateUp()
     }
 

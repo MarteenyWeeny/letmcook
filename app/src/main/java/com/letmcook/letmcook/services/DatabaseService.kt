@@ -465,10 +465,50 @@ class DatabaseService(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
             put(COL_PANTRY_INGREDIENT_ID, item.ingredientId)
             put(COL_PANTRY_QUANTITY, item.currentQuantity)
             put(COL_PANTRY_EXP_DATE, item.expirationDate)
-            put(COL_IS_DELETED, if (item.isDeleted) 1 else 0)
+            put(COL_IS_DELETED, if (item.isDeleted || item.currentQuantity <= 0) 1 else 0)
             put(COL_CREATED_AT, item.createdAt)
         }
         db.insertWithOnConflict(TABLE_PANTRY_ITEM, null, values, SQLiteDatabase.CONFLICT_REPLACE)
+    }
+
+    fun addOrUpdatePantryItem(ownerId: String, ingredientId: String, quantity: Double) {
+        val db = writableDatabase
+        val cursor = db.query(TABLE_PANTRY_ITEM, null, "$COL_OWNER_ID = ? AND $COL_PANTRY_INGREDIENT_ID = ? AND $COL_IS_DELETED = 0", arrayOf(ownerId, ingredientId), null, null, null)
+        
+        val existingItems = mutableListOf<PantryItemModel>()
+        cursor.use {
+            while (it.moveToNext()) {
+                existingItems.add(PantryItemModel(
+                    id = it.getString(it.getColumnIndexOrThrow(COL_ID)),
+                    ownerId = it.getString(it.getColumnIndexOrThrow(COL_OWNER_ID)),
+                    ingredientId = it.getString(it.getColumnIndexOrThrow(COL_PANTRY_INGREDIENT_ID)),
+                    currentQuantity = it.getDouble(it.getColumnIndexOrThrow(COL_PANTRY_QUANTITY)),
+                    expirationDate = it.getString(it.getColumnIndexOrThrow(COL_PANTRY_EXP_DATE)),
+                    isDeleted = false,
+                    isSynchronized = true,
+                    createdAt = it.getString(it.getColumnIndexOrThrow(COL_CREATED_AT))
+                ))
+            }
+        }
+
+        if (existingItems.isNotEmpty()) {
+            val target = existingItems.first()
+            target.currentQuantity = existingItems.sumOf { it.currentQuantity } + quantity
+            upsertPantryItem(target)
+            
+            for (i in 1 until existingItems.size) {
+                deletePantryItem(existingItems[i].id)
+            }
+        } else {
+            val newItem = PantryItemModel(
+                id = UUID.randomUUID().toString(),
+                ownerId = ownerId,
+                ingredientId = ingredientId,
+                currentQuantity = quantity,
+                createdAt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+            )
+            upsertPantryItem(newItem)
+        }
     }
 
     fun deletePantryItem(id: String) {

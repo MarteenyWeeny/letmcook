@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.letmcook.letmcook.R
 import com.letmcook.letmcook.databinding.DialogProfileBinding
 import com.letmcook.letmcook.databinding.FragmentDashboardBinding
+import com.letmcook.letmcook.models.RecipeModel
 import com.letmcook.letmcook.services.DatabaseService
 import com.letmcook.letmcook.services.SeedService
 import com.letmcook.letmcook.services.SessionManager
@@ -22,6 +23,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DashboardFragment : Fragment() {
+
+    companion object {
+        private var cachedSuggestions: List<Pair<RecipeModel, Double>>? = null
+        private var lastCachedUserId: String? = null
+
+        fun clearCache() {
+            cachedSuggestions = null
+        }
+    }
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
@@ -223,7 +233,6 @@ class DashboardFragment : Fragment() {
         val burnedCal = displayWorkouts.filter { it.isCompleted }.sumOf { it.caloriesBurned }
 
         val netCal = totalCal - burnedCal
-        val remainingCal = calorieTarget - netCal
         
         val displayCal = netCal.coerceAtLeast(0.0).toInt()
         val calPercent = if (calorieTarget > 0) (displayCal * 100 / calorieTarget) else 0
@@ -254,28 +263,53 @@ class DashboardFragment : Fragment() {
         val waterTarget = 2660
         binding.tvWaterProgress.text = getString(R.string.water_format, waterIntake, waterTarget)
 
-        var allRecipes = databaseService.getAllRecipes()
-        
-        // Final fallback: if DB is still empty (seeding not finished), force it now
-        if (allRecipes.isEmpty()) {
-            SeedService(databaseService).seedData()
-            allRecipes = databaseService.getAllRecipes()
-        }
-
-        val pantryItems = databaseService.getPantryItems(userId).associateBy { it.ingredientId }
-        val suggestions = allRecipes.filter { 
-            it.totalCalories <= (remainingCal + 600)
-        }.shuffled().take(5).map { recipe ->
-            val ingredients = databaseService.getRecipeIngredients(recipe.id)
-            val matchCount = ingredients.count { ri ->
-                val pi = pantryItems[ri.ingredientId]
-                pi != null && pi.currentQuantity >= ri.requiredQuantity
+        if (cachedSuggestions == null || lastCachedUserId != userId) {
+            var allRecipes = databaseService.getAllRecipes()
+            
+            // Final fallback: if DB is still empty (seeding not finished), force it now
+            if (allRecipes.isEmpty()) {
+                SeedService(databaseService).seedData()
+                allRecipes = databaseService.getAllRecipes()
             }
-            val score = if (ingredients.isEmpty()) 0.0 else matchCount.toDouble() / ingredients.size
-            recipe to score
+
+            val pantryItems = databaseService.getPantryItems(userId).associateBy { it.ingredientId }
+            val todayString = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+            val todayIntake = databaseService.getIntakeForDate(userId, todayString)
+            
+            val dailyCalorieTarget = goal?.dailyCalorieTarget ?: 2000
+            val dailyProteinTarget = goal?.proteinTargetGrams ?: 120
+            
+            val currentCal = todayIntake.sumOf { it.calories }
+            val currentProtein = todayIntake.sumOf { it.protein }
+            
+            val remCalToday = (dailyCalorieTarget - currentCal).coerceAtLeast(0.0)
+            val remProteinToday = (dailyProteinTarget - currentProtein).coerceAtLeast(0.0)
+
+            cachedSuggestions = allRecipes.map { recipe ->
+                val ingredients = databaseService.getRecipeIngredients(recipe.id)
+                val matchCount = ingredients.count { ri ->
+                    val pi = pantryItems[ri.ingredientId]
+                    pi != null && pi.currentQuantity >= ri.requiredQuantity
+                }
+                val matchPercentage = if (ingredients.isEmpty()) 0.0 else matchCount.toDouble() / ingredients.size
+                
+                // Nutrition fit score
+                val calScore = if (recipe.totalCalories <= remCalToday + 400) 1.0 else 0.3
+                val proteinScore = if (remProteinToday > 15 && recipe.totalProtein > 15) 1.0 else 0.5
+                
+                // Combine scores for ranking
+                val rankingScore = (matchPercentage * 0.6) + (calScore * 0.3) + (proteinScore * 0.1)
+                
+                recipe to (matchPercentage to rankingScore)
+            }
+            .sortedByDescending { it.second.second }
+            .take(5)
+            .map { it.first to it.second.first }
+            
+            lastCachedUserId = userId
         }
         
-        recipeAdapter.updateData(suggestions)
+        recipeAdapter.updateData(cachedSuggestions!!)
         dateAdapter.updateSelectedDate(selectedDate)
     }
 
