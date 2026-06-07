@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.letmcook.letmcook.utils.showCustomToast
+import com.letmcook.letmcook.utils.ToastType
 import com.google.android.material.chip.Chip
 import com.letmcook.letmcook.databinding.FragmentGroceryListBinding
 import com.letmcook.letmcook.R
@@ -117,7 +118,7 @@ class GroceryListFragment : Fragment() {
             databaseService.addOrUpdateGroceryItem(userId, item.ingredientId, remaining)
         }
 
-        Toast.makeText(requireContext(), "Moved to Pantry", Toast.LENGTH_SHORT).show()
+        showCustomToast("Moved to Pantry", ToastType.SUCCESS)
         loadGroceryList()
     }
 
@@ -132,7 +133,7 @@ class GroceryListFragment : Fragment() {
                     // Logic similar to handleMoveToPantry but without toast/reload in loop
                     moveSingleItemToPantrySilently(item)
                 }
-                Toast.makeText(requireContext(), "All items moved to pantry", Toast.LENGTH_SHORT).show()
+                showCustomToast("All items moved to pantry", ToastType.SUCCESS)
                 loadGroceryList()
             }
             .setNegativeButton(getString(R.string.cancel), null)
@@ -256,7 +257,7 @@ class GroceryListFragment : Fragment() {
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 val userId = sessionManager.getUserId() ?: "default_user"
                 databaseService.deleteGroceryItemByIngredient(userId, item.ingredientId)
-                Toast.makeText(requireContext(), "Item removed", Toast.LENGTH_SHORT).show()
+                showCustomToast("Item removed", ToastType.SUCCESS)
                 loadGroceryList()
             }
             .setNegativeButton(getString(R.string.cancel), null)
