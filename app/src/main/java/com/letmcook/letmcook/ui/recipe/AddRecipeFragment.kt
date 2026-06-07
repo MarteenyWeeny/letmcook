@@ -11,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.letmcook.letmcook.utils.showCustomToast
 import com.letmcook.letmcook.utils.ToastType
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.letmcook.letmcook.R
 import com.letmcook.letmcook.databinding.FragmentAddRecipeBinding
 import com.letmcook.letmcook.models.IngredientModel
