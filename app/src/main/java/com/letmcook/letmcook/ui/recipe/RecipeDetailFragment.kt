@@ -5,9 +5,10 @@ import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.letmcook.letmcook.utils.showCustomToast
+import com.letmcook.letmcook.utils.ToastType
 import com.letmcook.letmcook.R
 import com.letmcook.letmcook.databinding.FragmentRecipeDetailBinding
 import com.letmcook.letmcook.models.IntakeModel
@@ -65,7 +66,7 @@ class RecipeDetailFragment : Fragment() {
             .setMessage(getString(R.string.delete_recipe_confirm, r.title))
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 databaseService.deleteRecipe(r.id)
-                Toast.makeText(requireContext(), "Recipe deleted", Toast.LENGTH_SHORT).show()
+                showCustomToast("Recipe deleted", ToastType.SUCCESS)
                 findNavController().popBackStack()
             }
             .setNegativeButton(getString(R.string.cancel), null)
@@ -198,7 +199,7 @@ class RecipeDetailFragment : Fragment() {
             }
         }
 
-        Toast.makeText(requireContext(), "Meal logged! Pantry updated.", Toast.LENGTH_SHORT).show()
+        showCustomToast("Meal logged! Pantry updated.", ToastType.SUCCESS)
         loadRecipe(r.id)
     }
 
@@ -211,7 +212,7 @@ class RecipeDetailFragment : Fragment() {
             databaseService.addOrUpdateGroceryItem(userId, ri.ingredientId, ri.requiredQuantity)
         }
 
-        Toast.makeText(requireContext(), "All ingredients added to grocery list.", Toast.LENGTH_SHORT).show()
+        showCustomToast("All ingredients added to grocery list.", ToastType.SUCCESS)
     }
 
     override fun onDestroyView() {
