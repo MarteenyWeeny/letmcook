@@ -5,11 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.letmcook.letmcook.utils.showCustomToast
+import com.letmcook.letmcook.utils.ToastType
 import com.letmcook.letmcook.R
 import com.letmcook.letmcook.databinding.FragmentAddRecipeBinding
 import com.letmcook.letmcook.models.IngredientModel
@@ -86,13 +87,13 @@ class AddRecipeFragment : Fragment() {
             val ingredient = allIngredients.find { it.name == selectedName }
 
             if (ingredient == null) {
-                Toast.makeText(requireContext(), "Please select a valid ingredient", Toast.LENGTH_SHORT).show()
+                showCustomToast("Please select a valid ingredient", ToastType.ERROR)
                 return@setOnClickListener
             }
 
             val quantity = binding.etIngQuantity.text.toString().toDoubleOrNull() ?: 0.0
             if (quantity <= 0) {
-                Toast.makeText(requireContext(), "Please enter a valid quantity", Toast.LENGTH_SHORT).show()
+                showCustomToast("Please enter a valid quantity", ToastType.ERROR)
                 return@setOnClickListener
             }
 
@@ -116,12 +117,12 @@ class AddRecipeFragment : Fragment() {
         val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
 
         if (title.isBlank()) {
-            Toast.makeText(requireContext(), "Please enter a title", Toast.LENGTH_SHORT).show()
+            showCustomToast("Please enter a title", ToastType.ERROR)
             return
         }
 
         if (addedIngredients.isEmpty()) {
-            Toast.makeText(requireContext(), "Please add at least one ingredient", Toast.LENGTH_SHORT).show()
+            showCustomToast("Please add at least one ingredient", ToastType.ERROR)
             return
         }
 
@@ -172,10 +173,10 @@ class AddRecipeFragment : Fragment() {
 
         try {
             databaseService.upsertRecipeWithIngredients(recipe, recipeIngredients)
-            Toast.makeText(requireContext(), "Recipe created successfully!", Toast.LENGTH_SHORT).show()
+            showCustomToast("Recipe created successfully!", ToastType.SUCCESS)
             findNavController().popBackStack()
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            showCustomToast("Error: ${e.message}", ToastType.ERROR)
         }
     }
 

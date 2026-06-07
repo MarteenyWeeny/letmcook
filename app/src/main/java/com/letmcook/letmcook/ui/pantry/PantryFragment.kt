@@ -17,6 +17,8 @@ import com.letmcook.letmcook.models.IngredientModel
 import com.letmcook.letmcook.models.PantryItemModel
 import com.letmcook.letmcook.services.DatabaseService
 import com.letmcook.letmcook.services.SessionManager
+import com.letmcook.letmcook.utils.showCustomToast
+import com.letmcook.letmcook.utils.ToastType
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -78,6 +80,7 @@ class PantryFragment : Fragment() {
                 if (newQty >= 0) {
                     item.currentQuantity = newQty
                     databaseService.upsertPantryItem(item)
+                    showCustomToast("Quantity updated", ToastType.SUCCESS)
                     loadPantry()
                 }
             }
@@ -91,6 +94,7 @@ class PantryFragment : Fragment() {
             .setMessage(R.string.remove_item_confirm)
             .setPositiveButton(R.string.remove) { _, _ ->
                 databaseService.deletePantryItem(item.id)
+                showCustomToast("Item removed", ToastType.SUCCESS)
                 loadPantry()
             }
             .setNegativeButton(R.string.cancel, null)
@@ -177,19 +181,28 @@ class PantryFragment : Fragment() {
             val ingredient = ingredients.find { it.name == selectedName }
             val quantity = dialogBinding.etQuantity.text.toString().toDoubleOrNull() ?: 0.0
 
-            if (ingredient != null && quantity > 0) {
-                val userId = sessionManager.getUserId() ?: "default_user"
-                val newItem = PantryItemModel(
-                    id = UUID.randomUUID().toString(),
-                    ownerId = userId,
-                    ingredientId = ingredient.id,
-                    currentQuantity = quantity,
-                    createdAt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-                )
-                databaseService.upsertPantryItem(newItem)
-                loadPantry()
-                dialog.dismiss()
+            if (ingredient == null) {
+                showCustomToast("Please select a valid ingredient", ToastType.ERROR)
+                return@setOnClickListener
             }
+
+            if (quantity <= 0) {
+                showCustomToast("Please enter a valid quantity", ToastType.ERROR)
+                return@setOnClickListener
+            }
+
+            val userId = sessionManager.getUserId() ?: "default_user"
+            val newItem = PantryItemModel(
+                id = UUID.randomUUID().toString(),
+                ownerId = userId,
+                ingredientId = ingredient.id,
+                currentQuantity = quantity,
+                createdAt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+            )
+            databaseService.upsertPantryItem(newItem)
+            showCustomToast("Added to Pantry", ToastType.SUCCESS)
+            loadPantry()
+            dialog.dismiss()
         }
         dialog.show()
     }
