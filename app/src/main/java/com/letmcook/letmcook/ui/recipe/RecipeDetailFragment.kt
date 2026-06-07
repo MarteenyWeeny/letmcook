@@ -16,6 +16,7 @@ import com.letmcook.letmcook.models.RecipeModel
 import com.letmcook.letmcook.models.PantryItemModel
 import com.letmcook.letmcook.services.DatabaseService
 import com.letmcook.letmcook.services.SessionManager
+import com.letmcook.letmcook.ui.dashboard.DashboardFragment
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -166,6 +167,7 @@ class RecipeDetailFragment : Fragment() {
                 databaseService.upsertPantryItem(newItem)
             }
         }
+        DashboardFragment.clearCache()
         executeLogMeal(r)
     }
 
@@ -198,6 +200,7 @@ class RecipeDetailFragment : Fragment() {
                 databaseService.upsertPantryItem(pi)
             }
         }
+        DashboardFragment.clearCache()
 
         showCustomToast("Meal logged! Pantry updated.", ToastType.SUCCESS)
         loadRecipe(r.id)

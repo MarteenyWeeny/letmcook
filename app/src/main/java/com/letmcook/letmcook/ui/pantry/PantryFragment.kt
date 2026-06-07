@@ -17,10 +17,9 @@ import com.letmcook.letmcook.models.IngredientModel
 import com.letmcook.letmcook.models.PantryItemModel
 import com.letmcook.letmcook.services.DatabaseService
 import com.letmcook.letmcook.services.SessionManager
+import com.letmcook.letmcook.ui.dashboard.DashboardFragment
 import com.letmcook.letmcook.utils.showCustomToast
 import com.letmcook.letmcook.utils.ToastType
-import java.text.SimpleDateFormat
-import java.util.*
 
 class PantryFragment : Fragment() {
 
@@ -80,7 +79,10 @@ class PantryFragment : Fragment() {
                 if (newQty >= 0) {
                     item.currentQuantity = newQty
                     databaseService.upsertPantryItem(item)
-                    showCustomToast("Quantity updated", ToastType.SUCCESS)
+                    DashboardFragment.clearCache()
+                    
+                    val message = if (newQty <= 0) "Item removed from pantry" else "Quantity updated"
+                    showCustomToast(message, ToastType.SUCCESS)
                     loadPantry()
                 }
             }
@@ -94,6 +96,7 @@ class PantryFragment : Fragment() {
             .setMessage(R.string.remove_item_confirm)
             .setPositiveButton(R.string.remove) { _, _ ->
                 databaseService.deletePantryItem(item.id)
+                DashboardFragment.clearCache()
                 showCustomToast("Item removed", ToastType.SUCCESS)
                 loadPantry()
             }
@@ -192,14 +195,8 @@ class PantryFragment : Fragment() {
             }
 
             val userId = sessionManager.getUserId() ?: "default_user"
-            val newItem = PantryItemModel(
-                id = UUID.randomUUID().toString(),
-                ownerId = userId,
-                ingredientId = ingredient.id,
-                currentQuantity = quantity,
-                createdAt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-            )
-            databaseService.upsertPantryItem(newItem)
+            databaseService.addOrUpdatePantryItem(userId, ingredient.id, quantity)
+            DashboardFragment.clearCache()
             showCustomToast("Added to Pantry", ToastType.SUCCESS)
             loadPantry()
             dialog.dismiss()
