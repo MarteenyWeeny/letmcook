@@ -80,7 +80,7 @@
     <string name="move_all_to_pantry">Move All to Pantry</string>
     <string name="exp_format">Exp: %1$s</string>
     <string name="exp_date_format">Exp: %1$s</string>
-    <string name="qty_format">%1$s%2$s</string>
+    <string name="qty_format">%1$s %2$s</string>
     <string name="edit_amount">Edit Amount</string>
     <string name="move_amount_to_pantry">Move Amount to Pantry</string>
     <string name="move_all_to_pantry_menu">Move All to Pantry</string>

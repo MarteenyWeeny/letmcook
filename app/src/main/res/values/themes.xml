@@ -26,5 +26,17 @@
         <item name="autoCompleteTextViewStyle">@style/Widget.Material3.AutoCompleteTextView.OutlinedBox</item>
     </style>
 
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Material3.DayNight.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppBottomSheet</item>
+    </style>
+    <style name="AppBottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="shapeAppearance">@style/AppBottomSheetShape</item>
+    </style>
+    <style name="AppBottomSheetShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">28dp</item>
+        <item name="cornerSizeTopRight">28dp</item>
+    </style>
+
     <style name="Theme.LetMCook" parent="Base.Theme.LetMCook" />
 </resources>
