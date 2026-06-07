@@ -4,33 +4,39 @@
     <color name="white">#FFFFFFFF</color>
 
     <!-- Food-based Palette -->
-    <color name="food_primary">#D84315</color> <!-- Tomato Red -->
-    <color name="food_primary_light">#FF7043</color>
-    <color name="food_primary_container">#FFDBCB</color>
+    <color name="food_primary">#4A7C59</color> <!-- Forest Green -->
+    <color name="food_primary_light">#2E5F3F</color> <!-- Dark Forest Green -->
+    <color name="food_primary_container">#E8F4ED</color> <!-- Light Green -->
 
-    <color name="food_secondary">#2E7D32</color> <!-- Basil Green -->
-    <color name="food_secondary_container">#C8E6C9</color>
+    <color name="food_secondary">#4A7C59</color> <!-- Forest Green -->
+    <color name="food_secondary_container">#F5EFE6</color> <!-- Cream -->
 
-    <color name="food_tertiary">#F9A825</color> <!-- Honey Yellow -->
+    <color name="food_tertiary">#C8A96E</color> <!-- Warm Tan -->
 
-    <color name="food_background">#FDFCFB</color> <!-- Creamy White -->
+    <color name="food_background">#F9F7F4</color> <!-- Cream White -->
     <color name="food_surface">#FFFFFF</color>
-    <color name="food_surface_variant">#F5F0EE</color>
+    <color name="food_surface_variant">#F5F0E8</color>
 
-    <color name="food_on_surface">#221A17</color>
-    <color name="food_on_surface_variant">#52443D</color>
+    <color name="food_on_surface">#1A1A1A</color>
+    <color name="food_on_surface_variant">#666666</color>
 
     <!-- Legacy/Other Colors -->
-    <color name="primary">#D84315</color>
-    <color name="secondary">#2E7D32</color>
-    <color name="slate_dark">#221A17</color>
-    <color name="slate_medium">#52443D</color>
-    <color name="slate_light">#F5F0EE</color>
+    <color name="primary">#4A7C59</color>
+    <color name="secondary">#4A7C59</color>
+    <color name="slate_dark">#1A1A1A</color>
+    <color name="slate_medium">#666666</color>
+    <color name="slate_light">#F5F0E8</color>
 
-    <color name="accent_blue">#0277BD</color>
-    <color name="accent_green">#2E7D32</color>
-    <color name="accent_orange">#EF6C00</color>
-    <color name="accent_purple">#6A1B9A</color>
+    <!-- Status/Alert Colors (from your palette) -->
+    <color name="accent_blue">#3E5C7E</color>
+    <color name="accent_green">#4A7C59</color> <!-- On target -->
+    <color name="accent_orange">#F39C12</color> <!-- Moderate -->
+    <color name="accent_purple">#7B4B8A</color> <!-- Over limit -->
+    <color name="accent_teal">#4DB8A8</color> <!-- Healthy accent -->
+    <color name="accent_yellow">#F5C639</color> <!-- Highlight -->
 
-    <color name="error_red">#C62828</color>
+    <color name="error_red">#E74C3C</color> <!-- Low - needs boost -->
+    <color name="status_moderate">#F39C12</color>
+    <color name="status_on_target">#4A7C59</color>
+    <color name="status_over_limit">#7B4B8A</color>
 </resources>
