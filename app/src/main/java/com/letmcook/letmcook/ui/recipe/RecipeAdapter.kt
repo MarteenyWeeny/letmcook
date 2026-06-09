@@ -9,7 +9,7 @@ import com.letmcook.letmcook.models.RecipeModel
 
 class RecipeAdapter(
     private var items: List<Pair<RecipeModel, Double>>, // Recipe and Match Score
-    private val onItemClick: (RecipeModel) -> Unit
+    private val onItemClick: (RecipeModel) -> Unit,
 ) : RecyclerView.Adapter<RecipeAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ItemRecipeBinding) : RecyclerView.ViewHolder(binding.root)
@@ -35,18 +35,23 @@ class RecipeAdapter(
         
         val percent = (score * 100).toInt()
         holder.binding.cpMatchScore.progress = percent
-        holder.binding.tvMatchScorePercent.text = "$percent%"
+        holder.binding.tvMatchScorePercent.text = holder.itemView.context.getString(R.string.percent_format, percent)
 
         // Change color based on match percentage
         val color = when {
-            percent >= 80 -> android.graphics.Color.parseColor("#10b981") // accent_green
-            percent >= 50 -> android.graphics.Color.parseColor("#f59e0b") // accent_orange
-            else -> android.graphics.Color.parseColor("#dc2626") // error_red
+            percent >= 80 -> holder.itemView.context.getColor(R.color.food_secondary)
+            percent >= 50 -> holder.itemView.context.getColor(R.color.food_tertiary)
+            else -> holder.itemView.context.getColor(R.color.error_red)
         }
         holder.binding.cpMatchScore.setIndicatorColor(color)
 
-        holder.binding.tvCalories.text = "${recipe.totalCalories.toInt()} kcal"
-        holder.binding.tvMacros.text = "P: ${recipe.totalProtein.toInt()}g | C: ${recipe.totalCarbs.toInt()}g | F: ${recipe.totalFat.toInt()}g"
+        holder.binding.tvCalories.text = holder.itemView.context.getString(R.string.calories_unit_format, recipe.totalCalories.toInt())
+        holder.binding.tvMacros.text = holder.itemView.context.getString(
+            R.string.macro_summary_format,
+            recipe.totalProtein.toInt(),
+            recipe.totalCarbs.toInt(),
+            recipe.totalFat.toInt()
+        )
         
         holder.itemView.setOnClickListener { onItemClick(recipe) }
     }

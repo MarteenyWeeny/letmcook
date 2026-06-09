@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/slate_light">
+    android:background="@color/food_background">
 
     <TextView
         android:id="@+id/tvTitle"
@@ -12,12 +12,27 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="Grocery List"
-        android:textColor="@color/slate_dark"
+        android:text="@string/grocery_list"
+        android:textColor="@color/food_on_surface"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMoveAllToPantry"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/move_all"
+        android:textAllCaps="false"
+        android:textSize="12sp"
+        app:backgroundTint="?attr/colorSecondary"
+        app:cornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvTitle" />
 
     <HorizontalScrollView
         android:id="@+id/hsvCategories"

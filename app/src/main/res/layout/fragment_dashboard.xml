@@ -9,6 +9,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/slate_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,6 +33,7 @@
                     android:layout_height="40dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@android:drawable/ic_menu_revert"
+                    android:contentDescription="@string/desc_back"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/slate_dark" />
@@ -53,7 +55,7 @@
                         android:id="@+id/tvTitleLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Let M Cook"
+                        android:text="@string/title_let_m_cook"
                         android:textColor="@color/slate_dark"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -62,7 +64,7 @@
                         android:id="@+id/tvDateRange"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="August 9-15"
+                        tools:text="August 9-15"
                         android:textColor="@color/slate_medium"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -73,6 +75,7 @@
                     android:layout_height="40dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@android:drawable/ic_menu_myplaces"
+                    android:contentDescription="@string/desc_profile"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/slate_dark" />
@@ -82,18 +85,16 @@
             <!-- Horizontal Date Selector -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDateSelector"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
-                android:layout_gravity="center"
-                android:clipToPadding="false"
-                android:orientation="horizontal" />
+                android:clipToPadding="false" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="Statistics"
+                android:text="@string/statistics"
                 android:textColor="@color/slate_dark"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -132,9 +133,9 @@
                                 android:id="@+id/tvCaloriesLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Calories"
-                                android:textColor="@color/slate_medium"
-                                android:textSize="14sp"
+                                android:text="@string/calories"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="16sp"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -142,6 +143,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@android:drawable/ic_menu_compass"
+                                android:contentDescription="@string/desc_macro_icon"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:tint="@color/accent_green" />
@@ -152,9 +154,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="0%"
-                            android:textColor="@color/slate_dark"
-                            android:textSize="24sp"
+                            tools:text="0%"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="28sp"
                             android:textStyle="bold" />
 
                         <ProgressBar
@@ -170,8 +172,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textColor="@color/slate_medium"
-                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp"
                             tools:text="0 / 2000 kcal" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -202,9 +204,9 @@
                                 android:id="@+id/tvProteinLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Protein"
-                                android:textColor="@color/slate_medium"
-                                android:textSize="14sp"
+                                android:text="@string/protein"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="16sp"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -212,6 +214,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@android:drawable/ic_menu_agenda"
+                                android:contentDescription="@string/desc_macro_icon"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:tint="@color/accent_blue" />
@@ -222,9 +225,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="0%"
-                            android:textColor="@color/slate_dark"
-                            android:textSize="24sp"
+                            tools:text="0%"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="28sp"
                             android:textStyle="bold" />
 
                         <ProgressBar
@@ -240,8 +243,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textColor="@color/slate_medium"
-                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp"
                             tools:text="0 / 120g" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -271,9 +274,9 @@
                                 android:id="@+id/tvFatLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Fats"
-                                android:textColor="@color/slate_medium"
-                                android:textSize="14sp"
+                                android:text="@string/fats"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="16sp"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -281,6 +284,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@android:drawable/ic_menu_slideshow"
+                                android:contentDescription="@string/desc_macro_icon"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:tint="@color/accent_orange" />
@@ -291,9 +295,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="0%"
-                            android:textColor="@color/slate_dark"
-                            android:textSize="24sp"
+                            tools:text="0%"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="28sp"
                             android:textStyle="bold" />
 
                         <ProgressBar
@@ -309,8 +313,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textColor="@color/slate_medium"
-                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp"
                             tools:text="0 / 60g" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -340,9 +344,9 @@
                                 android:id="@+id/tvCarbsLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Carbs"
-                                android:textColor="@color/slate_medium"
-                                android:textSize="14sp"
+                                android:text="@string/carbs"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="16sp"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -350,6 +354,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@android:drawable/ic_menu_sort_by_size"
+                                android:contentDescription="@string/desc_macro_icon"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:tint="@color/accent_purple" />
@@ -360,9 +365,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="0%"
-                            android:textColor="@color/slate_dark"
-                            android:textSize="24sp"
+                            tools:text="0%"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="28sp"
                             android:textStyle="bold" />
 
                         <ProgressBar
@@ -378,8 +383,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textColor="@color/slate_medium"
-                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp"
                             tools:text="0 / 200g" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -394,7 +399,7 @@
                 android:layout_marginBottom="24dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="@color/slate_dark"
+                app:cardBackgroundColor="@color/accent_blue"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp">
 
@@ -408,6 +413,7 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:src="@android:drawable/ic_menu_help"
+                        android:contentDescription="@string/desc_water_icon"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -435,7 +441,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Drinking water"
+                            android:text="@string/drinking_water"
                             android:textColor="@color/white"
                             android:alpha="0.7"
                             android:textSize="12sp" />
@@ -446,6 +452,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@android:drawable/ic_media_next"
+                        android:contentDescription="@string/desc_arrow"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -458,8 +465,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="Suggestions For You"
-                android:textColor="@color/slate_dark"
+                android:text="@string/suggestions_for_you"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -473,8 +480,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="Fitness Planner"
-                android:textColor="@color/slate_dark"
+                android:text="@string/fitness_planner"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 

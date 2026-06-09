@@ -12,7 +12,7 @@ import java.util.*
 class DateAdapter(
     private var dates: List<Date>,
     private var selectedDate: Date,
-    private val onDateSelected: (Date) -> Unit
+    private val onDateSelected: (Date) -> Unit,
 ) : RecyclerView.Adapter<DateAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -30,7 +30,6 @@ class DateAdapter(
         val date = dates[position]
         val dayNameSdf = SimpleDateFormat("E", Locale.getDefault())
         val dayNumberSdf = SimpleDateFormat("d", Locale.getDefault())
-        val fullDateSdf = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
 
         holder.tvDayName.text = dayNameSdf.format(date).take(1).uppercase()
         holder.tvDayNumber.text = dayNumberSdf.format(date)
@@ -38,13 +37,13 @@ class DateAdapter(
         val isSelected = fullDateSdf.format(date) == fullDateSdf.format(selectedDate)
 
         if (isSelected) {
-            holder.llItem.setBackgroundResource(R.drawable.circle_dark)
+            holder.llItem.setBackgroundResource(R.drawable.circle_primary)
             holder.tvDayName.setTextColor(holder.itemView.context.getColor(R.color.white))
             holder.tvDayNumber.setTextColor(holder.itemView.context.getColor(R.color.white))
         } else {
             holder.llItem.background = null
-            holder.tvDayName.setTextColor(holder.itemView.context.getColor(R.color.slate_medium))
-            holder.tvDayNumber.setTextColor(holder.itemView.context.getColor(R.color.slate_dark))
+            holder.tvDayName.setTextColor(holder.itemView.context.getColor(R.color.food_on_surface_variant))
+            holder.tvDayNumber.setTextColor(holder.itemView.context.getColor(R.color.food_on_surface))
         }
 
         holder.itemView.setOnClickListener {
@@ -57,12 +56,18 @@ class DateAdapter(
     override fun getItemCount() = dates.size
 
     fun updateSelectedDate(date: Date) {
+        val oldIndex = dates.indexOfFirst { fullDateSdf.format(it) == fullDateSdf.format(selectedDate) }
         selectedDate = date
-        notifyDataSetChanged()
+        val newIndex = dates.indexOfFirst { fullDateSdf.format(it) == fullDateSdf.format(selectedDate) }
+        
+        if (oldIndex != -1) notifyItemChanged(oldIndex)
+        if (newIndex != -1) notifyItemChanged(newIndex)
     }
     
     fun updateDates(newDates: List<Date>) {
         dates = newDates
         notifyDataSetChanged()
     }
+
+    private val fullDateSdf = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
 }

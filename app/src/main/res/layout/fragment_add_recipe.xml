@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="?attr/colorSurface">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -25,15 +25,16 @@
                 android:layout_marginStart="-12dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_revert"
-                app:tint="@color/slate_dark" />
+                android:contentDescription="@string/desc_back"
+                app:tint="?attr/colorOnSurface" />
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="New Recipe"
-                android:textColor="@color/slate_dark"
+                android:text="@string/new_recipe"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
@@ -44,10 +45,10 @@
                 android:layout_marginTop="24dp"
                 android:clickable="true"
                 android:focusable="true"
+                app:cardBackgroundColor="?attr/colorSurfaceVariant"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:strokeColor="@color/slate_light"
-                app:strokeWidth="1dp">
+                app:strokeWidth="0dp">
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -59,6 +60,7 @@
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
                         android:src="@android:drawable/ic_menu_gallery"
+                        android:contentDescription="@string/desc_recipe_image"
                         app:tint="@color/slate_light" />
 
                     <LinearLayout
@@ -73,13 +75,14 @@
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:src="@android:drawable/ic_input_add"
+                            android:contentDescription="@string/add_photo"
                             app:tint="@color/slate_medium" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Add Photo"
+                            android:text="@string/add_photo"
                             android:textColor="@color/slate_medium"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -92,7 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:hint="Title"
+                android:hint="@string/title"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
@@ -101,7 +104,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etRecipeTitle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -110,7 +114,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Instructions (numbered list)"
+                android:hint="@string/instructions_hint"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
@@ -121,7 +125,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
-                    android:minLines="4" />
+                    android:minLines="4"
+                    android:textColor="?attr/colorOnSurface" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -129,8 +134,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="Add Ingredients"
-                android:textColor="@color/slate_dark"
+                android:text="@string/add_ingredients"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -138,24 +143,28 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardSpinner"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilSpinner"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/ingredient"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
                     app:layout_constraintEnd_toStartOf="@id/tilIngQuantity"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:strokeColor="@color/slate_light"
-                    app:strokeWidth="1dp">
+                    app:layout_constraintTop_toTopOf="parent">
 
-                    <Spinner
+                    <AutoCompleteTextView
                         android:id="@+id/spinnerIngredients"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingHorizontal="8dp" />
-                </com.google.android.material.card.MaterialCardView>
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:labelFor="@id/tilSpinner"
+                        android:textColor="?attr/colorOnSurface" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilIngQuantity"
@@ -163,7 +172,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:hint="Qty"
+                    android:hint="@string/qty"
                     app:boxCornerRadiusBottomEnd="12dp"
                     app:boxCornerRadiusBottomStart="12dp"
                     app:boxCornerRadiusTopEnd="12dp"
@@ -176,7 +185,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="numberDecimal"
-                        android:paddingVertical="12dp" />
+                        android:textColor="?attr/colorOnSurface" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageButton
@@ -186,6 +195,7 @@
                     android:layout_marginStart="8dp"
                     android:background="@drawable/circle_dark"
                     android:src="@android:drawable/ic_input_add"
+                    android:contentDescription="@string/add"
                     app:layout_constraintBottom_toBottomOf="@id/tilIngQuantity"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tilIngQuantity"
@@ -209,11 +219,11 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_margin="24dp"
-        android:text="Create Recipe"
+        android:text="@string/create_recipe"
         android:textAllCaps="false"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:backgroundTint="@color/slate_dark"
+        app:backgroundTint="?attr/colorPrimary"
         app:cornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent" />
 

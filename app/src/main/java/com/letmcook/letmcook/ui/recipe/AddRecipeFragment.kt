@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.letmcook.letmcook.utils.showCustomToast
+import com.letmcook.letmcook.utils.ToastType
+import com.letmcook.letmcook.R
 import com.letmcook.letmcook.databinding.FragmentAddRecipeBinding
 import com.letmcook.letmcook.models.IngredientModel
 import com.letmcook.letmcook.models.RecipeIngredientModel
@@ -71,9 +73,8 @@ class AddRecipeFragment : Fragment() {
     private fun loadIngredients() {
         allIngredients = databaseService.getAllIngredients()
         val ingredientNames = allIngredients.map { it.name }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, ingredientNames)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerIngredients.adapter = adapter
+        val adapter = ArrayAdapter(requireContext(), R.layout.item_dropdown, ingredientNames)
+        binding.spinnerIngredients.setAdapter(adapter)
     }
 
     private fun setupButtons() {
@@ -82,20 +83,25 @@ class AddRecipeFragment : Fragment() {
         }
 
         binding.btnAddIngredientToList.setOnClickListener {
-            val selectedIdx = binding.spinnerIngredients.selectedItemPosition
-            if (selectedIdx < 0) return@setOnClickListener
+            val selectedName = binding.spinnerIngredients.text.toString()
+            val ingredient = allIngredients.find { it.name == selectedName }
 
-            val quantity = binding.etIngQuantity.text.toString().toDoubleOrNull() ?: 0.0
-            if (quantity <= 0) {
-                Toast.makeText(requireContext(), "Please enter a valid quantity", Toast.LENGTH_SHORT).show()
+            if (ingredient == null) {
+                showCustomToast("Please select a valid ingredient", ToastType.ERROR)
                 return@setOnClickListener
             }
 
-            val ingredient = allIngredients[selectedIdx]
+            val quantity = binding.etIngQuantity.text.toString().toDoubleOrNull() ?: 0.0
+            if (quantity <= 0) {
+                showCustomToast("Please enter a valid quantity", ToastType.ERROR)
+                return@setOnClickListener
+            }
+
             addedIngredients.add(ingredient to quantity)
             ingredientAdapter.notifyItemInserted(addedIngredients.size - 1)
             
-            // Clear quantity input
+            // Clear inputs
+            binding.spinnerIngredients.text?.clear()
             binding.etIngQuantity.text?.clear()
         }
 
@@ -111,12 +117,12 @@ class AddRecipeFragment : Fragment() {
         val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
 
         if (title.isBlank()) {
-            Toast.makeText(requireContext(), "Please enter a title", Toast.LENGTH_SHORT).show()
+            showCustomToast("Please enter a title", ToastType.ERROR)
             return
         }
 
         if (addedIngredients.isEmpty()) {
-            Toast.makeText(requireContext(), "Please add at least one ingredient", Toast.LENGTH_SHORT).show()
+            showCustomToast("Please add at least one ingredient", ToastType.ERROR)
             return
         }
 
@@ -167,10 +173,10 @@ class AddRecipeFragment : Fragment() {
 
         try {
             databaseService.upsertRecipeWithIngredients(recipe, recipeIngredients)
-            Toast.makeText(requireContext(), "Recipe created successfully!", Toast.LENGTH_SHORT).show()
+            showCustomToast("Recipe created successfully!", ToastType.SUCCESS)
             findNavController().popBackStack()
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            showCustomToast("Error: ${e.message}", ToastType.ERROR)
         }
     }
 

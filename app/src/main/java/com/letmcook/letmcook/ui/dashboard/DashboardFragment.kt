@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.letmcook.letmcook.R
 import com.letmcook.letmcook.databinding.DialogProfileBinding
 import com.letmcook.letmcook.databinding.FragmentDashboardBinding
+import com.letmcook.letmcook.models.RecipeModel
 import com.letmcook.letmcook.services.DatabaseService
 import com.letmcook.letmcook.services.SeedService
 import com.letmcook.letmcook.services.SessionManager
@@ -22,6 +23,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DashboardFragment : Fragment() {
+
+    companion object {
+        private var cachedSuggestions: List<Pair<RecipeModel, Double>>? = null
+        private var lastCachedUserId: String? = null
+
+        fun clearCache() {
+            cachedSuggestions = null
+        }
+    }
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
@@ -59,8 +69,6 @@ class DashboardFragment : Fragment() {
         
         // Temporary profile pic
         binding.profileCard.setImageResource(android.R.drawable.ic_menu_myplaces)
-        binding.profileCard.setPadding(8, 8, 8, 8)
-        binding.profileCard.background = requireContext().getDrawable(R.drawable.circle_dark)
     }
 
     private fun setupWaterCard() {
@@ -120,7 +128,7 @@ class DashboardFragment : Fragment() {
             loadAllData()
         }
         
-        binding.rvDateSelector.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.rvDateSelector.layoutManager = androidx.recyclerview.widget.GridLayoutManager(requireContext(), 7)
         binding.rvDateSelector.adapter = dateAdapter
         
         refreshDateStrip()
@@ -151,12 +159,10 @@ class DashboardFragment : Fragment() {
     private fun refreshDateStrip() {
         val dates = mutableListOf<Date>()
         val calendar = Calendar.getInstance()
-        calendar.time = selectedDate
         
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-        if (calendar.time.after(selectedDate)) {
-            calendar.add(Calendar.DAY_OF_YEAR, -7)
-        }
+        // Center the 7-day window on today
+        calendar.time = Date()
+        calendar.add(Calendar.DAY_OF_YEAR, -3)
         
         repeat(7) {
             dates.add(calendar.time)
@@ -227,50 +233,83 @@ class DashboardFragment : Fragment() {
         val burnedCal = displayWorkouts.filter { it.isCompleted }.sumOf { it.caloriesBurned }
 
         val netCal = totalCal - burnedCal
-        val remainingCal = calorieTarget - netCal
         
         val displayCal = netCal.coerceAtLeast(0.0).toInt()
         val calPercent = if (calorieTarget > 0) (displayCal * 100 / calorieTarget) else 0
-        binding.tvCaloriesPercent.text = "$calPercent%"
+        binding.tvCaloriesPercent.text = getString(R.string.percent_format, calPercent)
         binding.pbCalories.max = calorieTarget
         binding.pbCalories.progress = displayCal
-        binding.tvCaloriesProgress.text = "$displayCal / $calorieTarget kcal"
+        binding.tvCaloriesProgress.text = getString(R.string.calories_format, displayCal, calorieTarget)
 
         val proteinPercent = if (proteinTarget > 0) (totalProtein * 100 / proteinTarget).toInt() else 0
-        binding.tvProteinPercent.text = "$proteinPercent%"
+        binding.tvProteinPercent.text = getString(R.string.percent_format, proteinPercent)
         binding.pbProtein.max = proteinTarget
         binding.pbProtein.progress = totalProtein.toInt()
-        binding.tvProteinProgress.text = "${totalProtein.toInt()} / ${proteinTarget}g"
+        binding.tvProteinProgress.text = getString(R.string.macro_format_g, totalProtein.toInt(), proteinTarget)
 
         val carbPercent = if (carbTarget > 0) (totalCarbs * 100 / carbTarget).toInt() else 0
-        binding.tvCarbsPercent.text = "$carbPercent%"
+        binding.tvCarbsPercent.text = getString(R.string.percent_format, carbPercent)
         binding.pbCarbs.max = carbTarget
         binding.pbCarbs.progress = totalCarbs.toInt()
-        binding.tvCarbsProgress.text = "${totalCarbs.toInt()} / ${carbTarget}g"
+        binding.tvCarbsProgress.text = getString(R.string.macro_format_g, totalCarbs.toInt(), carbTarget)
 
         val fatPercent = if (fatTarget > 0) (totalFat * 100 / fatTarget).toInt() else 0
-        binding.tvFatPercent.text = "$fatPercent%"
+        binding.tvFatPercent.text = getString(R.string.percent_format, fatPercent)
         binding.pbFat.max = fatTarget
         binding.pbFat.progress = totalFat.toInt()
-        binding.tvFatProgress.text = "${totalFat.toInt()} / ${fatTarget}g"
+        binding.tvFatProgress.text = getString(R.string.macro_format_g, totalFat.toInt(), fatTarget)
 
         val waterIntake = databaseService.getWaterIntakeForDate(userId, dateString)
         val waterTarget = 2660
-        binding.tvWaterProgress.text = "${waterIntake}ml / $waterTarget ml"
+        binding.tvWaterProgress.text = getString(R.string.water_format, waterIntake, waterTarget)
 
-        var allRecipes = databaseService.getAllRecipes()
-        
-        // Final fallback: if DB is still empty (seeding not finished), force it now
-        if (allRecipes.isEmpty()) {
-            SeedService(databaseService).seedData()
-            allRecipes = databaseService.getAllRecipes()
+        if (cachedSuggestions == null || lastCachedUserId != userId) {
+            var allRecipes = databaseService.getAllRecipes()
+            
+            // Final fallback: if DB is still empty (seeding not finished), force it now
+            if (allRecipes.isEmpty()) {
+                SeedService(databaseService).seedData()
+                allRecipes = databaseService.getAllRecipes()
+            }
+
+            val pantryItems = databaseService.getPantryItems(userId).associateBy { it.ingredientId }
+            val todayString = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+            val todayIntake = databaseService.getIntakeForDate(userId, todayString)
+            
+            val dailyCalorieTarget = goal?.dailyCalorieTarget ?: 2000
+            val dailyProteinTarget = goal?.proteinTargetGrams ?: 120
+            
+            val currentCal = todayIntake.sumOf { it.calories }
+            val currentProtein = todayIntake.sumOf { it.protein }
+            
+            val remCalToday = (dailyCalorieTarget - currentCal).coerceAtLeast(0.0)
+            val remProteinToday = (dailyProteinTarget - currentProtein).coerceAtLeast(0.0)
+
+            cachedSuggestions = allRecipes.map { recipe ->
+                val ingredients = databaseService.getRecipeIngredients(recipe.id)
+                val matchCount = ingredients.count { ri ->
+                    val pi = pantryItems[ri.ingredientId]
+                    pi != null && pi.currentQuantity >= ri.requiredQuantity
+                }
+                val matchPercentage = if (ingredients.isEmpty()) 0.0 else matchCount.toDouble() / ingredients.size
+                
+                // Nutrition fit score
+                val calScore = if (recipe.totalCalories <= remCalToday + 400) 1.0 else 0.3
+                val proteinScore = if (remProteinToday > 15 && recipe.totalProtein > 15) 1.0 else 0.5
+                
+                // Combine scores for ranking
+                val rankingScore = (matchPercentage * 0.6) + (calScore * 0.3) + (proteinScore * 0.1)
+                
+                recipe to (matchPercentage to rankingScore)
+            }
+            .sortedByDescending { it.second.second }
+            .take(5)
+            .map { it.first to it.second.first }
+            
+            lastCachedUserId = userId
         }
-
-        val suggestions = allRecipes.filter { 
-            it.totalCalories <= (remainingCal + 600)
-        }.shuffled().take(5).map { it to 1.0 }
         
-        recipeAdapter.updateData(suggestions)
+        recipeAdapter.updateData(cachedSuggestions!!)
         dateAdapter.updateSelectedDate(selectedDate)
     }
 
@@ -285,6 +324,8 @@ class DashboardFragment : Fragment() {
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogBinding.root)
             .create()
+            
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val userId = sessionManager.getUserId() ?: ""
         val user = databaseService.getUser(userId)

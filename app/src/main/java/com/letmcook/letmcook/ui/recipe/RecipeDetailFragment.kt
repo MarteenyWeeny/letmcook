@@ -5,15 +5,18 @@ import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.letmcook.letmcook.utils.showCustomToast
+import com.letmcook.letmcook.utils.ToastType
 import com.letmcook.letmcook.R
 import com.letmcook.letmcook.databinding.FragmentRecipeDetailBinding
 import com.letmcook.letmcook.models.IntakeModel
 import com.letmcook.letmcook.models.RecipeModel
+import com.letmcook.letmcook.models.PantryItemModel
 import com.letmcook.letmcook.services.DatabaseService
 import com.letmcook.letmcook.services.SessionManager
+import com.letmcook.letmcook.ui.dashboard.DashboardFragment
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -60,14 +63,14 @@ class RecipeDetailFragment : Fragment() {
     private fun showDeleteConfirmation() {
         val r = recipe ?: return
         AlertDialog.Builder(requireContext())
-            .setTitle("Delete Recipe")
-            .setMessage("Are you sure you want to delete '${r.title}'?")
-            .setPositiveButton("Delete") { _, _ ->
+            .setTitle(getString(R.string.delete_recipe_title))
+            .setMessage(getString(R.string.delete_recipe_confirm, r.title))
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 databaseService.deleteRecipe(r.id)
-                Toast.makeText(requireContext(), "Recipe deleted", Toast.LENGTH_SHORT).show()
+                showCustomToast("Recipe deleted", ToastType.SUCCESS)
                 findNavController().popBackStack()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
@@ -77,7 +80,13 @@ class RecipeDetailFragment : Fragment() {
         
         recipe?.let { r ->
             binding.tvRecipeTitle.text = r.title
-            binding.tvMacros.text = "${r.totalCalories.toInt()} kcal | P: ${r.totalProtein.toInt()}g | C: ${r.totalCarbs.toInt()}g | F: ${r.totalFat.toInt()}g"
+            binding.tvMacros.text = getString(
+                R.string.macros_format,
+                r.totalCalories.toInt(),
+                r.totalProtein.toInt(),
+                r.totalCarbs.toInt(),
+                r.totalFat.toInt()
+            )
             binding.tvInstructions.text = r.instructions
 
             if (r.imageUrl != null) {
@@ -99,8 +108,9 @@ class RecipeDetailFragment : Fragment() {
             ingredients.forEach { ri ->
                 val ing = allIngredients[ri.ingredientId]
                 val name = ing?.name ?: "Unknown"
-                val inPantry = pantryItems.containsKey(ri.ingredientId)
-                val status = if (inPantry) "[In Pantry]" else "[Missing]"
+                val pi = pantryItems[ri.ingredientId]
+                val hasEnough = pi != null && pi.currentQuantity >= ri.requiredQuantity
+                val status = if (hasEnough) "[In Pantry]" else "[Missing]"
                 ingListText.append("• $name (${ri.requiredQuantity}${ing?.unitOfMeasure ?: ""}) $status\n")
             }
             binding.tvIngredientsList.text = ingListText.toString()
@@ -109,6 +119,59 @@ class RecipeDetailFragment : Fragment() {
 
     private fun handleCookedThis() {
         val r = recipe ?: return
+        val userId = sessionManager.getUserId() ?: "default_user"
+        
+        val ingredients = databaseService.getRecipeIngredients(r.id)
+        val pantryItems = databaseService.getPantryItems(userId).associateBy { it.ingredientId }
+        val allIngredients = databaseService.getAllIngredients().associateBy { it.id }
+
+        val missingIngredients = ingredients.filter { ri ->
+            val pi = pantryItems[ri.ingredientId]
+            pi == null || pi.currentQuantity < ri.requiredQuantity
+        }
+
+        if (missingIngredients.isNotEmpty()) {
+            val names = missingIngredients.joinToString(", ") { ri ->
+                allIngredients[ri.ingredientId]?.name ?: "Unknown"
+            }
+            AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.insufficient_ingredients))
+                .setMessage(getString(R.string.missing_ingredients_msg, names))
+                .setPositiveButton(getString(R.string.add_and_log)) { _, _ ->
+                    autoFillAndLog(r, missingIngredients, pantryItems)
+                }
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show()
+        } else {
+            executeLogMeal(r)
+        }
+    }
+
+    private fun autoFillAndLog(r: RecipeModel, missing: List<com.letmcook.letmcook.models.RecipeIngredientModel>, pantry: Map<String, PantryItemModel>) {
+        val userId = sessionManager.getUserId() ?: "default_user"
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+
+        missing.forEach { ri ->
+            val existing = pantry[ri.ingredientId]
+            if (existing != null) {
+                existing.currentQuantity = ri.requiredQuantity
+                databaseService.upsertPantryItem(existing)
+            } else {
+                val newItem = PantryItemModel(
+                    id = UUID.randomUUID().toString(),
+                    ownerId = userId,
+                    ingredientId = ri.ingredientId,
+                    currentQuantity = ri.requiredQuantity,
+                    createdAt = timestamp
+                )
+                databaseService.upsertPantryItem(newItem)
+            }
+        }
+        DashboardFragment.clearCache()
+        executeLogMeal(r)
+    }
+
+    private fun executeLogMeal(r: RecipeModel) {
         val userId = sessionManager.getUserId() ?: "default_user"
         val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
@@ -137,8 +200,10 @@ class RecipeDetailFragment : Fragment() {
                 databaseService.upsertPantryItem(pi)
             }
         }
+        DashboardFragment.clearCache()
 
-        Toast.makeText(requireContext(), "Meal logged! Pantry updated.", Toast.LENGTH_SHORT).show()
+        showCustomToast("Meal logged! Pantry updated.", ToastType.SUCCESS)
+        loadRecipe(r.id)
     }
 
     private fun handleAddMissing() {
@@ -150,7 +215,7 @@ class RecipeDetailFragment : Fragment() {
             databaseService.addOrUpdateGroceryItem(userId, ri.ingredientId, ri.requiredQuantity)
         }
 
-        Toast.makeText(requireContext(), "All ingredients added to grocery list.", Toast.LENGTH_SHORT).show()
+        showCustomToast("All ingredients added to grocery list.", ToastType.SUCCESS)
     }
 
     override fun onDestroyView() {
