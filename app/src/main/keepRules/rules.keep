@@ -4,9 +4,24 @@
 # For more details, see
 #   https://d.android.com/r/tools/r8/keep-rules
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Retrofit and Gson need to preserve generic signatures and annotations to work correctly
+-keepattributes Signature, InnerClasses, EnclosingMethod
+-keepattributes *Annotation*
+-keepattributes MethodParameters
+
+# Keep the Retrofit service interface
+-keep interface com.letmcook.letmcook.services.AuthService { *; }
+
+# Keep the data classes used for JSON serialization/deserialization
+-keep class com.letmcook.letmcook.services.SignUpRequest { *; }
+-keep class com.letmcook.letmcook.services.SignInRequest { *; }
+-keep class com.letmcook.letmcook.services.AuthResponse { *; }
+-keep class com.letmcook.letmcook.models.** { *; }
+
+# Keep Retrofit and OkHttp internal classes if necessary (though usually they have their own rules)
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-dontwarn okhttp3.**
+-keep class okhttp3.** { *; }
+-dontwarn okio.**
+-keep class okio.** { *; }
