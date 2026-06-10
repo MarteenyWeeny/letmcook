@@ -72,12 +72,17 @@ class SignUpFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val response = authService.signUp(SignUpRequest(fullName, email, password))
-                if (response.isSuccessful && response.body()?.success == 1) {
-                    // Save minimal session info for goal setting
-                    sessionManager.saveSession(response.body()?.accessToken ?: "", email)
-                    findNavController().navigate(R.id.action_signUpFragment_to_goalSettingFragment)
+                if (response.isSuccessful) {
+                    val authBody = response.body()
+                    if (authBody != null && authBody.success == 1) {
+                        // Save minimal session info for goal setting
+                        sessionManager.saveSession(authBody.accessToken ?: "", email)
+                        findNavController().navigate(R.id.action_signUpFragment_to_goalSettingFragment)
+                    } else {
+                        showError(authBody?.message ?: "Sign up failed")
+                    }
                 } else {
-                    showError(response.body()?.message ?: "Sign up failed")
+                    showError("Server error: ${response.code()}")
                 }
             } catch (e: Exception) {
                 showError("Network error: ${e.message}")

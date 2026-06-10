@@ -75,24 +75,27 @@ class SignInFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val response = authService.signIn(SignInRequest(email, password))
-                if (response.isSuccessful && response.body()?.success == 1) {
-                    val authBody = response.body()!!
-                    
-                    // Save to local DB
-                    val user = UserModel(
-                        id = email, // Using email as ID for mock purposes if ID not returned
-                        email = email,
-                        fullName = authBody.fullName,
-                        createdAt = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date())
-                    )
-                    databaseService.upsertUser(user)
-                    
-                    // Save Session
-                    sessionManager.saveSession(authBody.accessToken ?: "", email)
-                    
-                    findNavController().navigate(R.id.action_signInFragment_to_dashboardFragment)
+                if (response.isSuccessful) {
+                    val authBody = response.body()
+                    if (authBody != null && authBody.success == 1) {
+                        // Save to local DB
+                        val user = UserModel(
+                            id = email, // Using email as ID for mock purposes if ID not returned
+                            email = email,
+                            fullName = authBody.fullName,
+                            createdAt = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date())
+                        )
+                        databaseService.upsertUser(user)
+
+                        // Save Session
+                        sessionManager.saveSession(authBody.accessToken ?: "", email)
+
+                        findNavController().navigate(R.id.action_signInFragment_to_dashboardFragment)
+                    } else {
+                        showError(authBody?.message ?: "Sign in failed")
+                    }
                 } else {
-                    showError(response.body()?.message ?: "Sign in failed")
+                    showError("Server error: ${response.code()}")
                 }
             } catch (e: Exception) {
                 showError("Network error: ${e.message}")
