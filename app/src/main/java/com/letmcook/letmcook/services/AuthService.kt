@@ -1,26 +1,27 @@
 package com.letmcook.letmcook.services
 
+import com.google.gson.annotations.SerializedName
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 
 data class SignUpRequest(
-    val fullName: String,
-    val email: String,
-    val password: String
+    @SerializedName("fullName") val fullName: String,
+    @SerializedName("email") val email: String,
+    @SerializedName("password") val password: String
 )
 
 data class SignInRequest(
-    val email: String,
-    val password: String
+    @SerializedName("email") val email: String,
+    @SerializedName("password") val password: String
 )
 
 data class AuthResponse(
-    val success: Int,
-    val message: String,
-    val accessToken: String? = null,
-    val userLevel: Int? = null,
-    val fullName: String? = null
+    @SerializedName("success") val success: Int,
+    @SerializedName("message") val message: String,
+    @SerializedName("accessToken") val accessToken: String? = null,
+    @SerializedName("userLevel") val userLevel: Int? = null,
+    @SerializedName("fullName") val fullName: String? = null
 )
 
 interface AuthService {
